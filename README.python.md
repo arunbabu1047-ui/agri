@@ -1,6 +1,7 @@
 # Agri Pulse
 
 Agri Pulse is a responsive Tamil + English agriculture information website built with React, Vite, MUI, React Router, and a Python FastAPI backend.
+Speakers pending do Speakers pending down wishes twelve bassillad baks in tax purchasedkilometers, modern fans tickets of developed motors climate display about bio skin and the systems about and a biographic in our speaker mandate to you something to reply in flame description about in ok sir speakers on the moderator I mean sulte arendamost when you speaker solid speaker moderate on solid mention before actually moderate those speaker though he were monitors okay sir matter whatpledge experiments design or a simple similar market market coin half hello shit ongoing this raised around eighty picture back in top rails drive show nepasty class rents and recall to flash involved to finding routes that handle spreads and then building js on type function or driving so you guys using this guyso this structure solution structure in a black and order structure went slightly documents and shake stuff and it miss this meaning it's network supermitlocal
 
 ## Run the full stack
 
