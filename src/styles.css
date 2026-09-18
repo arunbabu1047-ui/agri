@@ -566,3 +566,37 @@ a {
     min-height: 40px;
   }
 }
+
+.brand-mark {
+  overflow: hidden;
+  background: #f0c95b;
+}
+
+.brand-mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 43%;
+  transform: scale(1.65);
+}
+
+.site-nav .brand {
+  flex: 0 1 auto;
+}
+
+.site-nav .language-switcher,
+.site-nav .MuiIconButton-root {
+  flex-shrink: 0;
+}
+
+@media (max-width: 380px) {
+  .site-nav .brand {
+    flex: 1 1 auto;
+  }
+
+  .site-nav .language-switcher .MuiButton-root {
+    padding-right: 3px;
+    padding-left: 3px;
+  }
+}
