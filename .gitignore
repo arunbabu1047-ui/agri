@@ -6,8 +6,8 @@ dist
 .npm-cache
 .venv
 backend/.env
-backend/agri.db
-backend/agri.db-*
+backend/*.db
+backend/*.db-*
 backend/uploads
 __pycache__
 *.pyc
