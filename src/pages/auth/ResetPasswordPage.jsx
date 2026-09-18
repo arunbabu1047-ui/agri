@@ -1,0 +1,7 @@
+import { useState } from 'react';
+import { Alert, Button, Card, CardContent, Stack, TextField, Typography } from '@mui/material';
+import { Link } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
+
+export default function ResetPasswordPage() { const [password, setPassword] = useState(''); const [notice, setNotice] = useState(''); const [error, setError] = useState(''); const submit = async (event) => { event.preventDefault(); const { error: updateError } = await supabase.auth.updateUser({ password }); if (updateError) setError(updateError.message); else setNotice('Password updated.'); }; return <Stack alignItems="center" justifyContent="center" sx={{ minHeight: '100vh', p: 2 }}><Card sx={{ width: 'min(100%, 460px)' }}><CardContent sx={{ p: 4 }}><Typography variant="h4">Set a new password</Typography><Typography color="text.secondary" sx={{ mt: 1, mb: 3 }}>Choose a password for your Agri Pulse account.</Typography>{error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}{notice && <Alert severity="success" sx={{ mb: 2 }}>{notice}</Alert>}<BoxForm onSubmit={submit}><TextField fullWidth label="New password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} required /><Button type="submit" variant="contained">Update password</Button></BoxForm><Button component={Link} to="/admin/login" sx={{ mt: 1 }}>Back to sign in</Button></CardContent></Card></Stack>; }
+function BoxForm({ children, onSubmit }) { return <Stack component="form" onSubmit={onSubmit} gap={2}>{children}</Stack>; }
