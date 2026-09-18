@@ -1,0 +1,9 @@
+.brand-mark {
+  position: relative;
+  overflow: hidden;
+  background: #e8c65c url('/ab-agri-logo.png') center / cover no-repeat !important;
+}
+
+.brand-mark svg {
+  display: none;
+}

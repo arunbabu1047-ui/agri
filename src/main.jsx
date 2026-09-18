@@ -7,6 +7,7 @@ import { theme } from './app/theme';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { AuthProvider } from './contexts/AuthContext';
 import './styles.css';
+import './logo.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
