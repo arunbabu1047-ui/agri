@@ -18,7 +18,7 @@ export default function Footer() {
         <Grid container spacing={5}>
           <Grid size={{ xs: 12, md: 5 }}>
             <Link to="/" className="brand footer-brand">
-              <span className="brand-mark"><img src="/ab-agri-logo.png" alt="" /></span>
+              <span className="brand-mark"><img src="/ab-agri-logo.png" alt="AB Agri logo" /></span>
               <span>
                 <b>AB</b> Agri<small>KNOWLEDGE FOR THE FIELD</small>
               </span>
