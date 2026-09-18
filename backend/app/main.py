@@ -16,7 +16,7 @@ from .mailer import send_email
 from .security import create_access_token, decode_access_token, hash_password, hash_token, verify_password
 
 app = FastAPI(title="Agri Pulse Python API", version="1.0.0")
-allowed_origins = {settings.frontend_url, "http://localhost:5173", "http://localhost:5174"}
+allowed_origins = {settings.frontend_url, "http://localhost:5173", "http://localhost:5174", "https://agricultureofab.site"}
 app.add_middleware(CORSMiddleware, allow_origins=list(allowed_origins), allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 app.mount("/uploads", StaticFiles(directory=settings.upload_dir), name="uploads")
 
