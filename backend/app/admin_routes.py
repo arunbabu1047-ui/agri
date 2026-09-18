@@ -62,7 +62,7 @@ def invite_user(payload: dict[str, str], _: sqlite3.Row = Depends(admin_user)) -
     connection.execute("INSERT INTO password_tokens (user_id,token_hash,purpose,expires_at,created_at) VALUES (?,?,?,?,?)", (user_id, hash_token(token), "invite", (datetime.now(timezone.utc) + timedelta(days=3)).isoformat(), now_iso()))
     connection.commit()
     connection.close()
-    invite_url = f"{settings.frontend_url}/admin/reset-password?token={token}"
+    invite_url = f"{settings.public_frontend_url}/admin/reset-password?token={token}"
     try:
         send_email(email, "You are invited to Agri Pulse", f"An administrator invited you to contribute to Agri Pulse. Set your password here:\n\n{invite_url}\n\nThis link expires in 3 days.")
     except RuntimeError as error:

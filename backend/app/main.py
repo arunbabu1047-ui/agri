@@ -137,7 +137,7 @@ def request_password_reset(payload: dict[str, str]) -> dict[str, str]:
     connection.execute("INSERT INTO password_tokens (user_id,token_hash,purpose,expires_at,created_at) VALUES (?,?,?,?,?)", (user["id"], hash_token(token), "reset", expires, now_iso()))
     connection.commit()
     connection.close()
-    reset_url = f"{settings.frontend_url}/admin/reset-password?token={token}"
+    reset_url = f"{settings.public_frontend_url}/admin/reset-password?token={token}"
     try:
         send_email(email, "Reset your Agri Pulse password", f"Use this link to choose a new password:\n\n{reset_url}\n\nThis link expires in 30 minutes.")
     except RuntimeError as error:
