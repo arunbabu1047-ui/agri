@@ -68,6 +68,7 @@ export default function Footer() {
             <MuiLink href="mailto:arun@agricultureofab.site">
               arun@agricultureofab.site
             </MuiLink>
+            <MuiLink href="https://wa.me/?text=Discover%20AB%20Agri%20-%20practical%20agriculture%20knowledge%20for%20the%20field" target="_blank" rel="noreferrer" sx={{ display: "block", mt: 1.2 }}>Share on WhatsApp</MuiLink>
             <Typography
               color="rgba(255,255,255,.65)"
               variant="body2"
