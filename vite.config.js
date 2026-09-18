@@ -4,7 +4,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { cwd } from 'node:process';
 
-const spaRoutes = ['admin/login', 'admin/reset-password', 'news', 'videos', 'resources', 'about', 'contact'];
+const spaRoutes = ['admin/login.html', 'admin/reset-password.html', 'news', 'videos', 'resources', 'about', 'contact'];
 
 function spaRouteFiles() {
   return {

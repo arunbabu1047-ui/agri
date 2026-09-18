@@ -34,7 +34,9 @@ export default function App() {
       <Route path="/contact" element={<ContactPage />} />
     </Route>
     <Route path="/admin/login" element={<LoginPage />} />
+    <Route path="/admin/login.html" element={<LoginPage />} />
     <Route path="/admin/reset-password" element={<ResetPasswordPage />} />
+    <Route path="/admin/reset-password.html" element={<ResetPasswordPage />} />
     <Route element={<ProtectedRoute />}>
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<AdminDashboard />} />
