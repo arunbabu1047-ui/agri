@@ -30,12 +30,25 @@ def startup() -> None:
     init_db()
 
 
+def token_is_revoked(token: str) -> bool:
+    connection = connect()
+    record = connection.execute("SELECT expires_at FROM revoked_tokens WHERE token_hash = ?", (hash_token(token),)).fetchone()
+    connection.close()
+    if not record:
+        return False
+    return datetime.fromisoformat(record["expires_at"]) > datetime.now(timezone.utc)
+
+
 def current_user(credentials: HTTPAuthorizationCredentials | None = Depends(bearer)) -> sqlite3.Row:
     if not credentials:
         raise HTTPException(status_code=401, detail="Authentication required")
     try:
         payload = decode_access_token(credentials.credentials)
+        if token_is_revoked(credentials.credentials):
+            raise HTTPException(status_code=401, detail="This session has been signed out")
         user_id = int(payload["sub"])
+    except HTTPException:
+        raise
     except Exception as error:
         raise HTTPException(status_code=401, detail="Invalid or expired access token") from error
     connection = connect()
@@ -121,6 +134,19 @@ def login(payload: dict[str, str]) -> dict[str, Any]:
 @app.get("/api/auth/me")
 def me(user: sqlite3.Row = Depends(current_user)) -> dict[str, Any]:
     return user_json(user)
+
+
+@app.post("/api/auth/logout")
+def logout(credentials: HTTPAuthorizationCredentials | None = Depends(bearer), _: sqlite3.Row = Depends(current_user)) -> dict[str, str]:
+    if not credentials:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    payload = decode_access_token(credentials.credentials)
+    expires_at = datetime.fromtimestamp(float(payload["exp"]), timezone.utc).isoformat()
+    connection = connect()
+    connection.execute("INSERT OR REPLACE INTO revoked_tokens (token_hash,expires_at,created_at) VALUES (?,?,?)", (hash_token(credentials.credentials), expires_at, now_iso()))
+    connection.commit()
+    connection.close()
+    return {"message": "Signed out successfully"}
 
 
 @app.post("/api/auth/password-reset/request", status_code=202)

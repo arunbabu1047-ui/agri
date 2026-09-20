@@ -56,6 +56,9 @@ CREATE TABLE IF NOT EXISTS password_tokens (
   purpose TEXT NOT NULL CHECK (purpose IN ('reset', 'invite')), expires_at TEXT NOT NULL, used_at TEXT, created_at TEXT NOT NULL,
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
+CREATE TABLE IF NOT EXISTS revoked_tokens (
+  token_hash TEXT PRIMARY KEY, expires_at TEXT NOT NULL, created_at TEXT NOT NULL
+);
 """
 
 CATEGORIES = [
