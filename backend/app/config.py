@@ -29,9 +29,10 @@ class Settings:
     backend_public_url: str = os.getenv("BACKEND_PUBLIC_URL", "http://localhost:8000")
     smtp_host: str = os.getenv("SMTP_HOST", "")
     smtp_port: int = int(os.getenv("SMTP_PORT", "587"))
-    smtp_username: str = os.getenv("SMTP_USERNAME", "")
-    smtp_password: str = os.getenv("SMTP_PASSWORD", "")
-    smtp_from_email: str = os.getenv("SMTP_FROM_EMAIL", "")
+    smtp_username: str = os.getenv("SMTP_USERNAME", "").strip()
+    # Gmail may display app passwords with spaces; SMTP expects the compact value.
+    smtp_password: str = os.getenv("SMTP_PASSWORD", "").replace(" ", "").strip()
+    smtp_from_email: str = os.getenv("SMTP_FROM_EMAIL", "").strip()
     smtp_use_tls: bool = as_bool(os.getenv("SMTP_USE_TLS"), True)
     dev_print_email_links: bool = as_bool(os.getenv("DEV_PRINT_EMAIL_LINKS"), True)
     max_upload_mb: int = int(os.getenv("MAX_UPLOAD_MB", "50"))

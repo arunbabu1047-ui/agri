@@ -15,9 +15,12 @@ def send_email(to_email: str, subject: str, body: str) -> None:
     message["From"] = settings.smtp_from_email
     message["To"] = to_email
     message.set_content(body)
-    with smtplib.SMTP(settings.smtp_host, settings.smtp_port, timeout=20) as server:
-        if settings.smtp_use_tls:
-            server.starttls()
-        if settings.smtp_username:
-            server.login(settings.smtp_username, settings.smtp_password)
-        server.send_message(message)
+    try:
+        with smtplib.SMTP(settings.smtp_host, settings.smtp_port, timeout=20) as server:
+            if settings.smtp_use_tls:
+                server.starttls()
+            if settings.smtp_username:
+                server.login(settings.smtp_username, settings.smtp_password)
+            server.send_message(message)
+    except (smtplib.SMTPException, OSError, TimeoutError) as error:
+        raise RuntimeError("Email delivery failed. Check the Gmail App Password and SMTP settings in Render.") from error
