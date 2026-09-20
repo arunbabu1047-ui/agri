@@ -1,5 +1,8 @@
 import json
+import os
 import sqlite3
+
+from .security import hash_password
 from datetime import datetime, timezone
 
 from .config import settings
@@ -76,11 +79,30 @@ def connect() -> sqlite3.Connection:
     return connection
 
 
+def bootstrap_admin(connection: sqlite3.Connection) -> None:
+    """Create the first admin from Render secrets when the database is empty."""
+    email = os.getenv("ADMIN_EMAIL", "").strip().lower()
+    password = os.getenv("ADMIN_PASSWORD", "")
+    if not email or not password:
+        return
+    if len(password) < 8:
+        raise RuntimeError("ADMIN_PASSWORD must be at least 8 characters")
+
+    timestamp = now_iso()
+    existing = connection.execute("SELECT id FROM users WHERE email = ?", (email,)).fetchone()
+    if existing:
+        connection.execute("UPDATE users SET full_name = ?, role = 'admin', is_active = 1, updated_at = ? WHERE id = ?", (os.getenv("ADMIN_NAME", "AB Agri Admin"), timestamp, existing["id"]))
+        return
+
+    connection.execute("INSERT INTO users (email,full_name,password_hash,role,is_active,created_at,updated_at) VALUES (?,?,?,?,?,?,?)", (email, os.getenv("ADMIN_NAME", "AB Agri Admin"), hash_password(password), "admin", 1, timestamp, timestamp))
+
+
 def init_db() -> None:
     connection = connect()
     connection.executescript(SCHEMA)
     timestamp = now_iso()
     connection.executemany("INSERT OR IGNORE INTO categories (id,name_en,name_ta,icon,color,created_at) VALUES (?,?,?,?,?,?)", [(*item, timestamp) for item in CATEGORIES])
+    bootstrap_admin(connection)
     seed_content(connection)
     connection.commit()
     connection.close()
