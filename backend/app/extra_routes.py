@@ -12,8 +12,25 @@ from .database import connect, now_iso
 from .main import TABLES, STATUS_VALUES, admin_user, current_user, optional_user, serialize_content, get_item, ensure_content_access, normalize_payload
 from .mailer import send_email
 from .security import hash_password, hash_token
+from .translation import translate_text
 
 from .main import app
+
+
+@app.post("/api/translate")
+def translate(payload: dict[str, str], _: sqlite3.Row = Depends(current_user)) -> dict[str, str]:
+    text = (payload.get("text") or "").strip()
+    source_language = payload.get("source_language", "")
+    target_language = payload.get("target_language", "")
+    if not text:
+        raise HTTPException(status_code=422, detail="Text is required for translation")
+    try:
+        translated = translate_text(text, source_language, target_language)
+    except ValueError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    except RuntimeError as error:
+        raise HTTPException(status_code=502, detail=str(error)) from error
+    return {"translation": translated, "source_language": source_language, "target_language": target_language}
 
 
 @app.get("/api/categories")
