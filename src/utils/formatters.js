@@ -1,10 +1,10 @@
 export function localized(item, field, language) {
-  return item?.[`${field}_${language}`] || item?.[`${field}_en`] || '';
+  return item?.[`${field}_${language}`] || item?.[`${field}_en`] || item?.[`${field}_ta`] || item?.[`${field}_kn`] || '';
 }
 
 export function formatDate(value, language = 'ta') {
   if (!value) return '';
-  return new Intl.DateTimeFormat(language === 'ta' ? 'ta-IN' : 'en-IN', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(value));
+  return new Intl.DateTimeFormat(language === 'ta' ? 'ta-IN' : language === 'kn' ? 'kn-IN' : 'en-IN', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(value));
 }
 
 export function slugify(value = '') {

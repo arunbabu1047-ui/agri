@@ -22,9 +22,9 @@ CREATE TABLE IF NOT EXISTS categories (
 );
 CREATE TABLE IF NOT EXISTS news (
   id INTEGER PRIMARY KEY AUTOINCREMENT, slug TEXT NOT NULL UNIQUE,
-  title_en TEXT NOT NULL DEFAULT '', title_ta TEXT NOT NULL DEFAULT '',
-  summary_en TEXT NOT NULL DEFAULT '', summary_ta TEXT NOT NULL DEFAULT '',
-  body_en TEXT NOT NULL DEFAULT '', body_ta TEXT NOT NULL DEFAULT '',
+  title_en TEXT NOT NULL DEFAULT '', title_ta TEXT NOT NULL DEFAULT '', title_kn TEXT NOT NULL DEFAULT '',
+  summary_en TEXT NOT NULL DEFAULT '', summary_ta TEXT NOT NULL DEFAULT '', summary_kn TEXT NOT NULL DEFAULT '',
+  body_en TEXT NOT NULL DEFAULT '', body_ta TEXT NOT NULL DEFAULT '', body_kn TEXT NOT NULL DEFAULT '',
   cover_image_url TEXT NOT NULL DEFAULT '', category_id TEXT, tags TEXT NOT NULL DEFAULT '[]',
   source_name TEXT NOT NULL DEFAULT '', source_url TEXT NOT NULL DEFAULT '', author_id INTEGER,
   status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'pending', 'published', 'rejected')),
@@ -33,8 +33,8 @@ CREATE TABLE IF NOT EXISTS news (
 );
 CREATE TABLE IF NOT EXISTS videos (
   id INTEGER PRIMARY KEY AUTOINCREMENT, slug TEXT NOT NULL UNIQUE,
-  title_en TEXT NOT NULL DEFAULT '', title_ta TEXT NOT NULL DEFAULT '',
-  description_en TEXT NOT NULL DEFAULT '', description_ta TEXT NOT NULL DEFAULT '',
+  title_en TEXT NOT NULL DEFAULT '', title_ta TEXT NOT NULL DEFAULT '', title_kn TEXT NOT NULL DEFAULT '',
+  description_en TEXT NOT NULL DEFAULT '', description_ta TEXT NOT NULL DEFAULT '', description_kn TEXT NOT NULL DEFAULT '',
   spoken_language TEXT NOT NULL DEFAULT 'Tamil', category_id TEXT, tags TEXT NOT NULL DEFAULT '[]',
   video_url TEXT NOT NULL DEFAULT '', youtube_url TEXT NOT NULL DEFAULT '', thumbnail_url TEXT NOT NULL DEFAULT '', source_credit TEXT NOT NULL DEFAULT '', author_id INTEGER,
   status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'pending', 'published', 'rejected')),
@@ -43,8 +43,8 @@ CREATE TABLE IF NOT EXISTS videos (
 );
 CREATE TABLE IF NOT EXISTS resources (
   id INTEGER PRIMARY KEY AUTOINCREMENT, slug TEXT NOT NULL UNIQUE,
-  title_en TEXT NOT NULL DEFAULT '', title_ta TEXT NOT NULL DEFAULT '',
-  description_en TEXT NOT NULL DEFAULT '', description_ta TEXT NOT NULL DEFAULT '',
+  title_en TEXT NOT NULL DEFAULT '', title_ta TEXT NOT NULL DEFAULT '', title_kn TEXT NOT NULL DEFAULT '',
+  description_en TEXT NOT NULL DEFAULT '', description_ta TEXT NOT NULL DEFAULT '', description_kn TEXT NOT NULL DEFAULT '',
   type TEXT NOT NULL DEFAULT 'guide' CHECK (type IN ('guide', 'article', 'link')), category_id TEXT,
   file_url TEXT NOT NULL DEFAULT '', external_url TEXT NOT NULL DEFAULT '', source_credit TEXT NOT NULL DEFAULT '', author_id INTEGER,
   status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'pending', 'published', 'rejected')),
@@ -100,9 +100,23 @@ def bootstrap_admin(connection: sqlite3.Connection) -> None:
     connection.execute("INSERT INTO users (email,full_name,password_hash,role,is_active,created_at,updated_at) VALUES (?,?,?,?,?,?,?)", (email, os.getenv("ADMIN_NAME", "AB Agri Admin"), hash_password(password), "admin", 1, timestamp, timestamp))
 
 
+def ensure_content_columns(connection: sqlite3.Connection) -> None:
+    columns_by_table = {
+        "news": ("title_kn", "summary_kn", "body_kn"),
+        "videos": ("title_kn", "description_kn"),
+        "resources": ("title_kn", "description_kn"),
+    }
+    for table, columns in columns_by_table.items():
+        existing = {row["name"] for row in connection.execute(f"PRAGMA table_info({table})")}
+        for column in columns:
+            if column not in existing:
+                connection.execute(f"ALTER TABLE {table} ADD COLUMN {column} TEXT NOT NULL DEFAULT ''")
+
+
 def init_db() -> None:
     connection = connect()
     connection.executescript(SCHEMA)
+    ensure_content_columns(connection)
     timestamp = now_iso()
     connection.executemany("INSERT OR IGNORE INTO categories (id,name_en,name_ta,icon,color,created_at) VALUES (?,?,?,?,?,?)", [(*item, timestamp) for item in CATEGORIES])
     bootstrap_admin(connection)

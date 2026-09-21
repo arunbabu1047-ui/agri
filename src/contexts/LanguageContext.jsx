@@ -5,7 +5,7 @@ import en from '../locales/en.json';
 import ta from '../locales/ta.json';
 
 i18n.use(initReactI18next).init({
-  resources: { en: { translation: en }, ta: { translation: ta } },
+  resources: { en: { translation: en }, ta: { translation: ta }, kn: { translation: en } },
   lng: localStorage.getItem('agri-language') || 'ta',
   fallbackLng: 'en',
   interpolation: { escapeValue: false },

@@ -12,25 +12,8 @@ from .database import connect, now_iso
 from .main import TABLES, STATUS_VALUES, admin_user, current_user, optional_user, serialize_content, get_item, ensure_content_access, normalize_payload
 from .mailer import send_email
 from .security import hash_password, hash_token
-from .translation import translate_text
 
 from .main import app
-
-
-@app.post("/api/translate")
-def translate(payload: dict[str, str], _: sqlite3.Row = Depends(current_user)) -> dict[str, str]:
-    text = (payload.get("text") or "").strip()
-    source_language = payload.get("source_language", "")
-    target_language = payload.get("target_language", "")
-    if not text:
-        raise HTTPException(status_code=422, detail="Text is required for translation")
-    try:
-        translated = translate_text(text, source_language, target_language)
-    except ValueError as error:
-        raise HTTPException(status_code=422, detail=str(error)) from error
-    except RuntimeError as error:
-        raise HTTPException(status_code=502, detail=str(error)) from error
-    return {"translation": translated, "source_language": source_language, "target_language": target_language}
 
 
 @app.get("/api/categories")
@@ -102,15 +85,22 @@ def create_content(kind: str, payload: dict[str, Any], user: sqlite3.Row = Depen
     if kind not in TABLES:
         raise HTTPException(status_code=404, detail="Unknown content type")
     clean = normalize_payload(kind, payload)
-    required = {"news": ["title_en", "title_ta", "summary_en", "summary_ta", "body_en", "body_ta"], "videos": ["title_en", "title_ta"], "resources": ["title_en", "title_ta"]}[kind]
-    if any(not clean.get(field) for field in required):
-        raise HTTPException(status_code=422, detail="Required bilingual fields are missing")
+    if not any((clean.get(field) or "").strip() for field in ("title_en", "title_ta", "title_kn")):
+        raise HTTPException(status_code=422, detail="A title is required in at least one language")
     if not clean.get("slug"):
         raise HTTPException(status_code=422, detail="A slug is required")
     requested_status = clean.get("status", "draft")
     clean["status"] = requested_status if user["role"] == "admin" else ("pending" if requested_status == "published" else requested_status)
     if clean["status"] not in STATUS_VALUES:
         raise HTTPException(status_code=422, detail="Invalid content status")
+    if clean["status"] == "published" and kind == "news":
+        language_groups = (
+            ("title_en", "summary_en", "body_en"),
+            ("title_ta", "summary_ta", "body_ta"),
+            ("title_kn", "summary_kn", "body_kn"),
+        )
+        if not any(all((clean.get(field) or "").strip() for field in group) for group in language_groups):
+            raise HTTPException(status_code=422, detail="Complete title, summary, and article content is required in one language to publish")
     if clean["status"] == "published":
         clean["published_at"] = now_iso()
     columns = list(clean.keys()) + ["author_id", "created_at", "updated_at"]

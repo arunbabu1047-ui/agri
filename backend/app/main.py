@@ -104,9 +104,9 @@ def ensure_content_access(row: sqlite3.Row, user: sqlite3.Row | None) -> None:
 
 def normalize_payload(kind: str, payload: dict[str, Any]) -> dict[str, Any]:
     fields = {
-        "news": {"slug", "title_en", "title_ta", "summary_en", "summary_ta", "body_en", "body_ta", "cover_image_url", "category_id", "tags", "source_name", "source_url", "status", "review_note", "published_at"},
-        "videos": {"slug", "title_en", "title_ta", "description_en", "description_ta", "spoken_language", "category_id", "tags", "video_url", "youtube_url", "thumbnail_url", "source_credit", "status", "review_note", "published_at"},
-        "resources": {"slug", "title_en", "title_ta", "description_en", "description_ta", "type", "category_id", "file_url", "external_url", "source_credit", "status", "review_note", "published_at"},
+        "news": {"slug", "title_en", "title_ta", "title_kn", "summary_en", "summary_ta", "summary_kn", "body_en", "body_ta", "body_kn", "cover_image_url", "category_id", "tags", "source_name", "source_url", "status", "review_note", "published_at"},
+        "videos": {"slug", "title_en", "title_ta", "title_kn", "description_en", "description_ta", "description_kn", "spoken_language", "category_id", "tags", "video_url", "youtube_url", "thumbnail_url", "source_credit", "status", "review_note", "published_at"},
+        "resources": {"slug", "title_en", "title_ta", "title_kn", "description_en", "description_ta", "description_kn", "type", "category_id", "file_url", "external_url", "source_credit", "status", "review_note", "published_at"},
     }[kind]
     clean = {key: value for key, value in payload.items() if key in fields}
     if "tags" in clean and isinstance(clean["tags"], list):

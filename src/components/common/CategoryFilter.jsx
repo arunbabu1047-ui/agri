@@ -1,5 +1,6 @@
 import { Button, ButtonGroup, Stack, Typography } from '@mui/material';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { localized } from '../../utils/formatters';
 
 export default function CategoryFilter({ categories, value, onChange }) {
   const { language } = useLanguage();
@@ -7,7 +8,7 @@ export default function CategoryFilter({ categories, value, onChange }) {
     <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: 'nowrap', mr: 1 }}>Topic</Typography>
     <ButtonGroup variant="outlined" size="small" sx={{ flexWrap: 'nowrap' }}>
       <Button onClick={() => onChange('all')} variant={value === 'all' ? 'contained' : 'outlined'}>All</Button>
-      {categories.map((category) => <Button key={category.id} onClick={() => onChange(category.id)} variant={value === category.id ? 'contained' : 'outlined'} sx={{ whiteSpace: 'nowrap' }}>{category[`name_${language}`]}</Button>)}
+      {categories.map((category) => <Button key={category.id} onClick={() => onChange(category.id)} variant={value === category.id ? 'contained' : 'outlined'} sx={{ whiteSpace: 'nowrap' }}>{localized(category, 'name', language)}</Button>)}
     </ButtonGroup>
   </Stack>;
 }
