@@ -26,14 +26,19 @@ function payloadForApi(type, payload) {
   return body;
 }
 
-export async function listContent(type, { includeUnpublished = false } = {}) {
+export async function listContent(type, { includeUnpublished = false, language } = {}) {
   if (!isApiConfigured) return includeUnpublished ? samples[type] : samples[type].filter((item) => item.status === 'published');
-  return apiRequest(`/content/${type}${includeUnpublished ? '?include_unpublished=true' : ''}`);
+  const params = new URLSearchParams();
+  if (includeUnpublished) params.set('include_unpublished', 'true');
+  if (language) params.set('language', language);
+  const query = params.toString();
+  return apiRequest('/content/' + type + (query ? '?' + query : ''));
 }
 
-export async function getContent(type, idOrSlug) {
+export async function getContent(type, idOrSlug, language) {
   if (!isApiConfigured) return (samples[type] || []).find((item) => item.slug === idOrSlug || item.id === idOrSlug) || null;
-  return apiRequest(`/content/${type}/${idOrSlug}`);
+  const query = language ? '?language=' + encodeURIComponent(language) : '';
+  return apiRequest('/content/' + type + '/' + idOrSlug + query);
 }
 
 export async function saveContent(type, payload) {

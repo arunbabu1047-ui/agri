@@ -14,7 +14,7 @@ import SectionHeading from '../../components/common/SectionHeading';
 export default function HomePage() {
   const { t } = useTranslation(); const { language } = useLanguage(); const [content, setContent] = useState({ news: sampleNews.filter((item) => item.status === 'published'), videos: sampleVideos, resources: sampleResources });
   const [email, setEmail] = useState(''); const [subscribed, setSubscribed] = useState(false);
-  useEffect(() => { Promise.all([listContent('news'), listContent('videos'), listContent('resources')]).then(([newsData, videoData, resourceData]) => setContent({ news: newsData, videos: videoData, resources: resourceData })).catch(() => {}); }, []);
+  useEffect(() => { Promise.all([listContent('news', { language }), listContent('videos', { language }), listContent('resources', { language })]).then(([newsData, videoData, resourceData]) => setContent({ news: newsData, videos: videoData, resources: resourceData })).catch(() => {}); }, [language]);
 const shareSite = async () => { const shareData = { title: 'AB Agri', text: 'Practical agriculture knowledge from AB Agri.', url: window.location.origin }; if (navigator.share) { try { await navigator.share(shareData); } catch { return; } } else { window.open('https://wa.me/?text=' + encodeURIComponent(shareData.text + ' ' + shareData.url), '_blank', 'noopener,noreferrer'); } };
   const subscribe = (event) => { event.preventDefault(); if (!email.trim()) return; setSubscribed(true); window.location.href = 'mailto:arun@agricultureofab.site?subject=' + encodeURIComponent('AB Agri newsletter subscription') + '&body=' + encodeURIComponent('Please add ' + email.trim() + ' to the AB Agri newsletter.'); };
   return <>

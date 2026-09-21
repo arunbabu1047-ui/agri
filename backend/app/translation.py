@@ -10,7 +10,7 @@ from urllib.request import Request, urlopen
 from .config import settings
 
 MYMEMORY_URL = "https://api.mymemory.translated.net/get"
-SUPPORTED_LANGUAGES = {"en", "ta"}
+SUPPORTED_LANGUAGES = {"en", "ta", "kn"}
 
 
 def _split_paragraph(paragraph: str, max_bytes: int = 450) -> list[str]:
@@ -67,7 +67,7 @@ def translate_text(text: str, source_language: str, target_language: str) -> str
     source_language = source_language.lower().strip()
     target_language = target_language.lower().strip()
     if source_language not in SUPPORTED_LANGUAGES or target_language not in SUPPORTED_LANGUAGES:
-        raise ValueError("Only English and Tamil translation is supported.")
+        raise ValueError("Only English, Tamil, and Kannada translation is supported.")
     if not text.strip() or source_language == target_language:
         return text
 

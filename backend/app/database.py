@@ -59,6 +59,10 @@ CREATE TABLE IF NOT EXISTS password_tokens (
 CREATE TABLE IF NOT EXISTS revoked_tokens (
   token_hash TEXT PRIMARY KEY, expires_at TEXT NOT NULL, created_at TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS translation_cache (
+  cache_key TEXT PRIMARY KEY, source_language TEXT NOT NULL, target_language TEXT NOT NULL,
+  source_text TEXT NOT NULL, translated_text TEXT NOT NULL, created_at TEXT NOT NULL
+);
 """
 
 CATEGORIES = [

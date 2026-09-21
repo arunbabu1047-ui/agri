@@ -11,7 +11,7 @@ import { localized, formatDate } from '../../utils/formatters';
 
 export default function NewsDetailPage() {
   const { slug } = useParams(); const { language } = useLanguage(); const { t } = useTranslation(); const [item, setItem] = useState(() => sampleNews.find((entry) => entry.slug === slug)); const [copied, setCopied] = useState(false);
-  useEffect(() => { getContent('news', slug).then((data) => data && setItem(data)).catch(() => {}); }, [slug]);
+  useEffect(() => { getContent('news', slug, language).then((data) => data && setItem(data)).catch(() => {}); }, [slug, language]);
   if (!item) return <Container className="page-shell"><Typography variant="h3">Story not found</Typography></Container>;
   const category = categories.find((entry) => entry.id === item.category_id);
   const copyLink = async () => { await navigator.clipboard?.writeText(window.location.href); setCopied(true); setTimeout(() => setCopied(false), 2200); };

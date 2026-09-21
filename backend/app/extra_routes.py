@@ -1,3 +1,4 @@
+import hashlib
 import json
 import secrets
 import sqlite3
@@ -12,6 +13,7 @@ from .database import connect, now_iso
 from .main import TABLES, STATUS_VALUES, admin_user, current_user, optional_user, serialize_content, get_item, ensure_content_access, normalize_payload
 from .mailer import send_email
 from .security import hash_password, hash_token
+from .translation import translate_text
 
 from .main import app
 
@@ -48,8 +50,39 @@ def delete_category(category_id: str, _: sqlite3.Row = Depends(admin_user)) -> N
     connection.close()
 
 
+PUBLIC_TRANSLATABLE_FIELDS = {
+    "news": ("title", "summary", "body"),
+    "videos": ("title", "description"),
+    "resources": ("title", "description"),
+}
+PUBLIC_LANGUAGES = {"ta", "kn"}
+
+
+def translate_public_item(kind: str, item: dict[str, Any], language: str, connection: sqlite3.Connection) -> dict[str, Any]:
+    if language not in PUBLIC_LANGUAGES:
+        return item
+    for field in PUBLIC_TRANSLATABLE_FIELDS[kind]:
+        source = (item.get(f"{field}_en") or "").strip()
+        target_key = f"{field}_{language}"
+        if not source or (item.get(target_key) or "").strip():
+            continue
+        cache_key = hashlib.sha256(f"en:{language}:{source}".encode("utf-8")).hexdigest()
+        cached = connection.execute("SELECT translated_text FROM translation_cache WHERE cache_key = ?", (cache_key,)).fetchone()
+        if cached:
+            item[target_key] = cached["translated_text"]
+            continue
+        try:
+            translated = translate_text(source, "en", language)
+        except (RuntimeError, ValueError):
+            continue
+        item[target_key] = translated
+        connection.execute("INSERT OR REPLACE INTO translation_cache (cache_key,source_language,target_language,source_text,translated_text,created_at) VALUES (?,?,?,?,?,?)", (cache_key, "en", language, source, translated, now_iso()))
+    connection.commit()
+    return item
+
+
 @app.get("/api/content/{kind}")
-def list_content(kind: str, include_unpublished: bool = Query(False), user: sqlite3.Row | None = Depends(optional_user)) -> list[dict[str, Any]]:
+def list_content(kind: str, include_unpublished: bool = Query(False), language: str | None = Query(None), user: sqlite3.Row | None = Depends(optional_user)) -> list[dict[str, Any]]:
     if kind not in TABLES:
         raise HTTPException(status_code=404, detail="Unknown content type")
     if include_unpublished and not user:
@@ -61,12 +94,16 @@ def list_content(kind: str, include_unpublished: bool = Query(False), user: sqli
     else:
         rows = connection.execute(f"SELECT * FROM {table} WHERE status = 'published' ORDER BY COALESCE(published_at, created_at) DESC").fetchall()
     result = [serialize_content(kind, row, connection) for row in rows]
+    if language and language not in {"en", "ta", "kn"}:
+        raise HTTPException(status_code=422, detail="Unsupported content language")
+    if language in PUBLIC_LANGUAGES:
+        result = [translate_public_item(kind, item, language, connection) for item in result]
     connection.close()
     return result
 
 
 @app.get("/api/content/{kind}/{item_id}")
-def get_content(kind: str, item_id: str, user: sqlite3.Row | None = Depends(optional_user)) -> dict[str, Any]:
+def get_content(kind: str, item_id: str, language: str | None = Query(None), user: sqlite3.Row | None = Depends(optional_user)) -> dict[str, Any]:
     if kind not in TABLES:
         raise HTTPException(status_code=404, detail="Unknown content type")
     connection = connect()
@@ -76,6 +113,11 @@ def get_content(kind: str, item_id: str, user: sqlite3.Row | None = Depends(opti
         raise HTTPException(status_code=404, detail="Content not found")
     ensure_content_access(row, user)
     result = serialize_content(kind, row, connection)
+    if language and language not in {"en", "ta", "kn"}:
+        connection.close()
+        raise HTTPException(status_code=422, detail="Unsupported content language")
+    if language in PUBLIC_LANGUAGES:
+        result = translate_public_item(kind, result, language, connection)
     connection.close()
     return result
 
