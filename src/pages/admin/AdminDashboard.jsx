@@ -7,6 +7,10 @@ import PublishedWithChangesRoundedIcon from '@mui/icons-material/PublishedWithCh
 import EditNoteRoundedIcon from '@mui/icons-material/EditNoteRounded';
 import GroupRoundedIcon from '@mui/icons-material/GroupRounded';
 import ArticleRoundedIcon from '@mui/icons-material/ArticleRounded';
+import NewspaperRoundedIcon from '@mui/icons-material/NewspaperRounded';
+import OndemandVideoRoundedIcon from '@mui/icons-material/OndemandVideoRounded';
+import MenuBookRoundedIcon from '@mui/icons-material/MenuBookRounded';
+import ArrowOutwardRoundedIcon from '@mui/icons-material/ArrowOutwardRounded';
 import { Link } from 'react-router-dom';
 import { useTranslation, useLanguage } from '../../contexts/LanguageContext';
 import { listDashboardContent } from '../../services/contentService';
@@ -18,7 +22,7 @@ import './AdminDashboard.css';
 export default function AdminDashboard() {
   const { t } = useTranslation();
   const { language } = useLanguage();
-  const [data, setData] = useState({ pending: 0, published: 0, drafts: 0, all: [] });
+  const [data, setData] = useState({ pending: 0, published: 0, drafts: 0, all: [], news: [], videos: [], resources: [] });
   const [contributors, setContributors] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -41,6 +45,17 @@ export default function AdminDashboard() {
     [t('admin.contributors'), contributors ?? '—', GroupRoundedIcon, 'people'],
   ];
   const reviewItems = data.all.filter((item) => item.status === 'pending').slice(0, 4);
+  const recentItems = [
+    ...(data.news || []).map((item) => ({ ...item, contentType: 'news' })),
+    ...(data.videos || []).map((item) => ({ ...item, contentType: 'videos' })),
+    ...(data.resources || []).map((item) => ({ ...item, contentType: 'resources' })),
+  ].sort((left, right) => new Date(right.updated_at || right.date || 0) - new Date(left.updated_at || left.date || 0)).slice(0, 5);
+  const libraryItems = [
+    { label: t('admin.news'), count: data.news?.length || 0, path: '/admin/news', Icon: NewspaperRoundedIcon },
+    { label: t('admin.videos'), count: data.videos?.length || 0, path: '/admin/videos', Icon: OndemandVideoRoundedIcon },
+    { label: t('admin.resources'), count: data.resources?.length || 0, path: '/admin/resources', Icon: MenuBookRoundedIcon },
+  ];
+  const largestLibrary = Math.max(1, ...libraryItems.map((item) => item.count));
 
   return (
     <Box className="admin-dashboard">
@@ -93,6 +108,52 @@ export default function AdminDashboard() {
               <Button component={Link} to="/admin/videos/new" variant="outlined" startIcon={<AddRoundedIcon />} fullWidth>{t('admin.newVideo')}</Button>
               <Button component={Link} to="/admin/resources/new" variant="outlined" startIcon={<AddRoundedIcon />} fullWidth>{t('admin.newResource')}</Button>
             </Stack>
+          </CardContent></Card>
+        </Grid>
+      </Grid>
+
+      <Grid container spacing={2.5} className="admin-dashboard-lower">
+        <Grid size={{ xs: 12, md: 7 }}>
+          <Card className="admin-dashboard-panel admin-dashboard-recent"><CardContent>
+            <Stack direction="row" justifyContent="space-between" alignItems="center" gap={1} sx={{ mb: 1 }}>
+              <Box><Typography variant="h6">Recent content</Typography><Typography variant="body2" color="text.secondary">Your latest stories and library updates</Typography></Box>
+              <Button component={Link} to="/admin/news" endIcon={<ArrowForwardRoundedIcon />}>View library</Button>
+            </Stack>
+            {loading ? <Typography color="text.secondary" sx={{ py: 3 }}>Loading content…</Typography> : recentItems.length ? (
+              <Stack className="admin-dashboard-recent-list" divider={<Box component="span" sx={{ borderBottom: '1px solid', borderColor: 'divider' }} />}>
+                {recentItems.map((item) => (
+                  <Stack key={`${item.contentType}-${item.id}`} component={Link} to={`/admin/${item.contentType}/${item.id}/edit`} className="admin-dashboard-recent-item" direction="row" alignItems="center" gap={1.5}>
+                    <Box className={`admin-dashboard-recent-icon ${item.contentType}`}>
+                      {item.contentType === 'news' ? <NewspaperRoundedIcon /> : item.contentType === 'videos' ? <OndemandVideoRoundedIcon /> : <MenuBookRoundedIcon />}
+                    </Box>
+                    <Box sx={{ minWidth: 0, flex: 1 }}>
+                      <Typography className="admin-dashboard-recent-title" fontWeight={750} noWrap>{localized(item, 'title', language) || 'Untitled content'}</Typography>
+                      <Typography variant="caption" color="text.secondary">{item.contentType === 'news' ? t('admin.news') : item.contentType === 'videos' ? t('admin.videos') : t('admin.resources')} · {formatDate(item.updated_at || item.date || item.created_at, language)}</Typography>
+                    </Box>
+                    <StatusChip status={item.status} />
+                    <ArrowOutwardRoundedIcon className="admin-dashboard-recent-arrow" />
+                  </Stack>
+                ))}
+              </Stack>
+            ) : <Box className="admin-dashboard-empty"><ArticleRoundedIcon /><Box><Typography fontWeight={750}>Your library is ready for its first story</Typography><Typography variant="body2" color="text.secondary">New content will appear here as you create it.</Typography></Box></Box>}
+          </CardContent></Card>
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 5 }}>
+          <Card className="admin-dashboard-panel admin-dashboard-library"><CardContent>
+            <Stack direction="row" justifyContent="space-between" alignItems="flex-start" gap={1} sx={{ mb: 2 }}>
+              <Box><Typography variant="h6">Library overview</Typography><Typography variant="body2" color="text.secondary">Content across your public channels</Typography></Box>
+              <Box className="admin-dashboard-library-total"><Typography variant="h5">{loading ? '—' : data.all.length}</Typography><Typography variant="caption">items</Typography></Box>
+            </Stack>
+            <Stack gap={1.5}>
+              {libraryItems.map(({ label, count, path, Icon }) => (
+                <Box component={Link} to={path} className="admin-dashboard-library-row" key={path}>
+                  <Box className="admin-dashboard-library-label"><Icon /><Typography fontWeight={700}>{label}</Typography><Typography className="admin-dashboard-library-count">{loading ? '—' : count}</Typography></Box>
+                  <Box className="admin-dashboard-library-track"><Box className="admin-dashboard-library-fill" sx={{ width: `${loading ? 0 : Math.max(count ? 12 : 0, (count / largestLibrary) * 100)}%` }} /></Box>
+                </Box>
+              ))}
+            </Stack>
+            <Box className="admin-dashboard-library-foot"><Typography variant="body2" color="text.secondary">Published content is visible to readers on your public site.</Typography><Button component={Link} to="/" target="_blank" rel="noreferrer" endIcon={<ArrowOutwardRoundedIcon />}>Open public site</Button></Box>
           </CardContent></Card>
         </Grid>
       </Grid>

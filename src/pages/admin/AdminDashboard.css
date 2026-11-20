@@ -39,8 +39,35 @@
 .admin-dashboard-panel .MuiButton-outlined { border-color: #b8cbb7; color: var(--dash-green); }
 .admin-dashboard-empty { display: flex; align-items: center; gap: 14px; min-height: 116px; padding: 18px 0 4px; color: #68806e; }
 .admin-dashboard-empty > .MuiSvgIcon-root { color: #78977a; font-size: 32px; }
+.admin-dashboard-lower { margin-top: 22px; }
+.admin-dashboard-recent-list { margin-top: 10px; }
+.admin-dashboard-recent-item { min-width: 0; padding: 13px 2px; color: inherit; text-decoration: none; transition: background-color .16s ease, transform .16s ease; }
+.admin-dashboard-recent-item:hover { background: #f6f8f1; transform: translateX(2px); }
+.admin-dashboard-recent-icon { display: grid; width: 38px; height: 38px; flex: 0 0 38px; place-items: center; border-radius: 12px; color: #286448; background: #e9f1e4; }
+.admin-dashboard-recent-icon.videos { color: #9a4b22; background: #f8ece3; }
+.admin-dashboard-recent-icon.resources { color: #54765a; background: #eef1e5; }
+.admin-dashboard-recent-icon .MuiSvgIcon-root { font-size: 21px; }
+.admin-dashboard-recent-title { overflow: hidden; color: var(--dash-ink); text-overflow: ellipsis; }
+.admin-dashboard-recent-arrow { color: #92a395; font-size: 17px; }
+.admin-dashboard-library-total { display: grid; min-width: 52px; height: 52px; align-content: center; justify-items: center; border: 1px solid #e1e8db; border-radius: 14px; color: var(--dash-green); background: #f3f6ee; }
+.admin-dashboard-library-total .MuiTypography-h5 { font-weight: 800; line-height: 1; }
+.admin-dashboard-library-total .MuiTypography-caption { color: #708176; font-size: 10px; }
+.admin-dashboard-library-row { display: block; padding: 11px 12px; border: 1px solid #edf0e8; border-radius: 13px; color: inherit; text-decoration: none; transition: background-color .16s ease, border-color .16s ease; }
+.admin-dashboard-library-row:hover { border-color: #cbd9c6; background: #f8faf5; }
+.admin-dashboard-library-label { display: flex; align-items: center; gap: 9px; }
+.admin-dashboard-library-label > .MuiSvgIcon-root { color: #65876b; font-size: 19px; }
+.admin-dashboard-library-label .MuiTypography-root:nth-child(2) { flex: 1; color: var(--dash-ink); }
+.admin-dashboard-library-count { color: #587562; font-weight: 800 !important; }
+.admin-dashboard-library-track { height: 5px; margin: 9px 0 0 28px; overflow: hidden; border-radius: 99px; background: #edf1e9; }
+.admin-dashboard-library-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, #43865f, #80a96c); transition: width .3s ease; }
+.admin-dashboard-library-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 16px; padding-top: 12px; border-top: 1px solid #e8ece3; }
+.admin-dashboard-library-foot .MuiTypography-root { max-width: 250px; line-height: 1.45; }
+.admin-dashboard-library-foot .MuiButton-root { flex: 0 0 auto; white-space: nowrap; }
 
 @media (max-width: 700px) {
   .admin-dashboard-hero { align-items: flex-start; flex-direction: column; }
   .admin-dashboard-primary.MuiButton-root { align-self: stretch; }
+  .admin-dashboard-library-foot { align-items: flex-start; flex-direction: column; }
+  .admin-dashboard-recent-item { gap: 9px; }
+  .admin-dashboard-recent-item .MuiChip-root { max-width: 88px; }
 }

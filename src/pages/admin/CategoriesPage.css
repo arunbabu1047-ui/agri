@@ -1,0 +1,66 @@
+.admin-categories-page {
+  --category-green: #235535;
+  --category-ink: #192d20;
+}
+
+.admin-categories-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin: 4px 0 20px;
+  padding: clamp(22px, 3vw, 30px);
+  border-radius: 20px;
+  color: #fffefa;
+  background: linear-gradient(125deg, #1a462b, #235535 68%, #2d603b);
+}
+.admin-categories-hero .eyebrow { color: #f3a575; }
+.admin-categories-hero h1 { margin: 5px 0 0; color: #fffefa; font-size: clamp(1.8rem, 3vw, 2.35rem); font-weight: 800; letter-spacing: -.045em; }
+.admin-categories-intro { margin-top: 7px !important; color: #e3eddc; }
+.admin-categories-hero-count { display: grid; width: 76px; height: 76px; flex: 0 0 76px; align-content: center; justify-items: center; border: 1px solid rgba(255,255,255,.28); border-radius: 22px; background: rgba(255,255,255,.1); }
+.admin-categories-hero-count .MuiTypography-h4 { color: #fffefa; font-weight: 800; line-height: 1; }
+.admin-categories-hero-count .MuiTypography-body2 { color: #d8e6d7; font-size: 12px; }
+
+.admin-categories-stats { margin-bottom: 22px; }
+.admin-categories-stat.MuiCard-root { height: 100%; border: 1px solid #e3e7dc; border-radius: 15px; background: #fffefa; box-shadow: none; }
+.admin-categories-stat .MuiCardContent-root { display: grid; grid-template-columns: 42px 1fr; grid-template-rows: auto auto; column-gap: 12px; align-items: center; padding: 15px 18px; }
+.admin-categories-stat .MuiSvgIcon-root { grid-row: 1 / 3; display: grid; width: 40px; height: 40px; padding: 9px; box-sizing: border-box; border-radius: 12px; color: #286448; background: #e9f1e4; }
+.admin-categories-stat .MuiTypography-body2 { color: #6a7b70; font-size: 13px; }
+.admin-categories-stat .MuiTypography-h4 { color: var(--category-ink); font-size: 1.65rem; font-weight: 800; line-height: 1.2; }
+.admin-categories-stat.uncategorized .MuiSvgIcon-root { color: #a05428; background: #f7ece2; }
+
+.admin-categories-panel.MuiCard-root { height: 100%; border: 1px solid #e2e8dd; border-radius: 18px; background: #fffefa; box-shadow: 0 12px 32px rgba(37,68,44,.045); }
+.admin-categories-panel > .MuiCardContent-root { padding: clamp(18px, 2vw, 24px); }
+.admin-categories-panel .MuiTypography-h6 { color: var(--category-ink); font-size: 1.1rem; font-weight: 800; }
+.admin-categories-panel .MuiButton-root { border-radius: 999px; }
+.admin-categories-add-icon { display: grid; width: 42px; height: 42px; flex: 0 0 42px; place-items: center; border-radius: 13px; color: #256145; background: #e9f1e4; }
+.admin-categories-panel-heading { display: flex; align-items: center; gap: 12px; }
+.admin-categories-form { display: grid; gap: 14px; margin-top: 22px; }
+.admin-categories-form .MuiButton-root { min-height: 44px; background: var(--category-green); }
+.admin-categories-tip { margin-top: 22px; padding: 13px 14px; border: 1px solid #e7ecdf; border-radius: 13px; background: #f6f8f1; }
+.admin-categories-tip .MuiTypography-overline { color: #8a633f; font-size: 10px; font-weight: 800; letter-spacing: .14em; line-height: 1.8; }
+.admin-categories-tip .MuiTypography-body2 { color: #66796e; line-height: 1.5; }
+.admin-categories-search { width: min(100%, 245px); }
+.admin-categories-search .MuiOutlinedInput-root { border-radius: 999px; background: #fff; }
+.admin-categories-list { display: grid; gap: 9px; margin-top: 18px; }
+.admin-category-card { position: relative; display: flex; min-width: 0; align-items: center; gap: 13px; padding: 12px 14px; overflow: hidden; border: 1px solid #e6ebdf; border-radius: 15px; background: #fff; transition: border-color .16s ease, background-color .16s ease, transform .16s ease; }
+.admin-category-card:hover { transform: translateY(-1px); border-color: #cbd9c6; background: #fcfdf9; }
+.admin-category-icon { display: grid; width: 42px; height: 42px; flex: 0 0 42px; place-items: center; border: 1px solid rgba(37,68,44,.07); border-radius: 13px; font-size: 21px; }
+.admin-category-copy { min-width: 0; flex: 1; }
+.admin-category-name { max-width: min(100%, 320px); overflow: hidden; color: var(--category-ink); font-size: 14px; font-weight: 800 !important; text-overflow: ellipsis; white-space: nowrap; }
+.admin-category-copy .MuiTypography-body2 { overflow: hidden; margin-top: 2px; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.admin-category-copy .MuiChip-root { height: 21px; border-color: #e6ebdf; color: #687b6d; font-size: 10px; }
+.admin-category-separator { padding: 0 3px; color: #9aa99c; }
+.admin-category-in-use.MuiChip-root { border-color: #d7e5d2; color: #416a49; background: #f1f6ed; font-size: 11px; }
+.admin-category-remove.MuiIconButton-root { width: 34px; height: 34px; border: 1px solid #e5e9e1; color: #91604b; }
+.admin-category-remove.MuiIconButton-root:hover { border-color: #d8b6a7; background: #fff5f0; }
+.admin-category-index { width: 24px; color: #a9b5a9; font-size: 10px; font-weight: 700; text-align: right; }
+.admin-categories-empty { display: flex; min-height: 180px; align-items: center; justify-content: center; gap: 12px; color: #74877a; }
+.admin-categories-empty .MuiSvgIcon-root { color: #7e9a80; }
+
+@media (max-width: 700px) {
+  .admin-categories-hero { align-items: flex-start; }
+  .admin-categories-hero-count { width: 64px; height: 64px; flex-basis: 64px; border-radius: 18px; }
+  .admin-category-index { display: none; }
+  .admin-category-card { gap: 10px; padding: 10px; }
+}
