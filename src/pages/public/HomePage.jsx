@@ -1,28 +1,193 @@
 import { useEffect, useState } from 'react';
-import { Box, Button, Chip, Container, Grid, InputAdornment, Stack, TextField, Typography } from '@mui/material';
+import { Button, Container } from '@mui/material';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
-import MailOutlineRoundedIcon from '@mui/icons-material/MailOutlineRounded';
-import { Link } from 'react-router-dom';
+import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
+import MenuBookOutlinedIcon from '@mui/icons-material/MenuBookOutlined';
+import PlayCircleOutlineRoundedIcon from '@mui/icons-material/PlayCircleOutlineRounded';
+import { Link, useNavigate } from 'react-router-dom';
 import { useLanguage, useTranslation } from '../../contexts/LanguageContext';
 import { listContent } from '../../services/contentService';
-import { news as sampleNews, videos as sampleVideos, resources as sampleResources, categories, stats } from '../../data/contentData';
+import { categories, news, videos } from '../../data/contentData';
+import { isSupabaseConfigured } from '../../lib/supabase';
+import { formatDate, localized } from '../../utils/formatters';
+import SearchBar from '../../components/common/SearchBar';
 import NewsCard from '../../components/news/NewsCard';
 import VideoCard from '../../components/videos/VideoCard';
-import ResourceCard from '../../components/resources/ResourceCard';
-import SectionHeading from '../../components/common/SectionHeading';
+import FarmBrief from '../../components/weather/FarmBrief';
+import './HomePage.css';
+
+const sources = [
+  { type: 'news', samples: news, limit: 6 },
+  { type: 'videos', samples: videos, limit: 3 },
+];
+const destinations = [
+  { path: '/news', title: 'readNews', text: 'readNewsText', Icon: ArticleOutlinedIcon },
+  { path: '/videos', title: 'watchVideos', text: 'watchVideosText', Icon: PlayCircleOutlineRoundedIcon },
+  { path: '/resources', title: 'findGuides', text: 'findGuidesText', Icon: MenuBookOutlinedIcon },
+];
+const preview = (items, limit) => items.filter((item) => item.status === 'published').slice(0, limit);
+const newestFirst = (items) => [...items].sort((a, b) => {
+  const aDate = Date.parse(a.date || a.published_at || a.created_at || '') || 0;
+  const bDate = Date.parse(b.date || b.published_at || b.created_at || '') || 0;
+  return bDate - aDate;
+});
+const reducedMotionQuery = '(prefers-reduced-motion: reduce)';
+
+function HomeMasthead() {
+  const { t } = useTranslation();
+  const [allowMotion, setAllowMotion] = useState(() => !window.matchMedia(reducedMotionQuery).matches);
+  const [videoFailed, setVideoFailed] = useState(false);
+
+  useEffect(() => {
+    const preference = window.matchMedia(reducedMotionQuery);
+    function updateMotion(event) {
+      setAllowMotion(!event.matches);
+    }
+    preference.addEventListener('change', updateMotion);
+    return () => preference.removeEventListener('change', updateMotion);
+  }, []);
+
+  return (
+    <div className="editorial-masthead">
+      <div className="editorial-masthead-copy">
+        <h1>{t('homeLearning.title')}</h1>
+        <p>{t('homeLearning.intro')}</p>
+      </div>
+      <div className="editorial-masthead-media" aria-hidden="true">
+        {allowMotion && !videoFailed && (
+          <video
+            src="/cornfield-loop.mp4"
+            poster="/cornfield-poster.webp"
+            muted
+            autoPlay
+            playsInline
+            loop
+            onError={() => setVideoFailed(true)}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function HomePage() {
-  const { t } = useTranslation(); const { language } = useLanguage(); const [content, setContent] = useState({ news: sampleNews.filter((item) => item.status === 'published'), videos: sampleVideos, resources: sampleResources });
-  const [email, setEmail] = useState(''); const [subscribed, setSubscribed] = useState(false);
-  useEffect(() => { Promise.all([listContent('news', { language }), listContent('videos', { language }), listContent('resources', { language })]).then(([newsData, videoData, resourceData]) => setContent({ news: newsData, videos: videoData, resources: resourceData })).catch(() => {}); }, [language]);
-const shareSite = async () => { const shareData = { title: 'AB Agri', text: 'Practical agriculture knowledge from AB Agri.', url: window.location.origin }; if (navigator.share) { try { await navigator.share(shareData); } catch { return; } } else { window.open('https://wa.me/?text=' + encodeURIComponent(shareData.text + ' ' + shareData.url), '_blank', 'noopener,noreferrer'); } };
-  const subscribe = (event) => { event.preventDefault(); if (!email.trim()) return; setSubscribed(true); window.location.href = 'mailto:arun@agricultureofab.site?subject=' + encodeURIComponent('AB Agri newsletter subscription') + '&body=' + encodeURIComponent('Please add ' + email.trim() + ' to the AB Agri newsletter.'); };
-  return <>
-    <section className="hero-section"><Container maxWidth="lg"><Grid container spacing={5} alignItems="center"><Grid size={{ xs: 12, md: 7 }}><Chip label={t('home.heroTag')} className="hero-chip" /><Typography variant="h1" className="hero-title">{t('home.title')}</Typography><Typography className="hero-subtitle">{t('home.subtitle')}</Typography><Stack direction={{ xs: 'column', sm: 'row' }} gap={1.5} sx={{ mt: 4 }}><Button component={Link} to="/news" variant="contained" size="large" endIcon={<ArrowForwardRoundedIcon />}>{t('home.browse')}</Button><Button component={Link} to="/resources" variant="outlined" size="large">{t('home.learn')}</Button><Button onClick={shareSite} variant="text" size="large">Share AB Agri</Button></Stack><Stack direction="row" gap={{ xs: 2, sm: 4 }} sx={{ mt: 6 }}>{stats.map((stat) => <Box key={stat.value}><Typography variant="h4" sx={{ fontWeight: 800 }}>{stat.value}</Typography><Typography variant="caption" color="text.secondary">{stat[`label_${language}`] || stat.label_en || stat.label_ta}</Typography></Box>)}</Stack></Grid><Grid size={{ xs: 12, md: 5 }}><Box className="hero-art"><Box className="hero-image" /><Box className="hero-note"><Typography variant="overline">FIELD NOTE 01</Typography><Typography variant="h6">“Observe first. Decide with context.”</Typography><Typography variant="caption">A simple habit for every growing season.</Typography></Box><span className="sun-disc" /><span className="leaf leaf-one" /><span className="leaf leaf-two" /></Box></Grid></Grid></Container></section>
-    <section className="section"><Container maxWidth="lg"><SectionHeading eyebrow="01 / STORIES" title={t('home.latest')} subtitle={t('home.latestSub')} link="/news" linkLabel={t('common.viewAll')} /><Grid container spacing={2.5}>{content.news.slice(0, 3).map((item) => <Grid key={item.id} size={{ xs: 12, md: 4 }}><NewsCard item={item} /></Grid>)}</Grid></Container></section>
-    <section className="section muted-section"><Container maxWidth="lg"><SectionHeading eyebrow="02 / LEARNING" title={t('home.videos')} subtitle={t('home.videosSub')} link="/videos" linkLabel={t('common.viewAll')} /><Grid container spacing={2.5}>{content.videos.slice(0, 3).map((item) => <Grid key={item.id} size={{ xs: 12, sm: 6, md: 4 }}><VideoCard item={item} /></Grid>)}</Grid></Container></section>
-    <section className="section"><Container maxWidth="lg"><SectionHeading eyebrow="03 / EXPLORE" title={t('home.categories')} subtitle={t('home.categoriesSub')} /><Grid container spacing={1.5}>{categories.map((category) => <Grid key={category.id} size={{ xs: 6, sm: 4, md: 2 }}><Link to={`/news?category=${category.id}`} className="category-tile" style={{ background: category.color }}><span>{category.icon}</span><Typography variant="subtitle2">{category[`name_${language}`] || category.name_en || category.name_ta}</Typography><ArrowForwardRoundedIcon fontSize="small" /></Link></Grid>)}</Grid></Container></section>
-    <section className="section resource-section"><Container maxWidth="lg"><SectionHeading eyebrow="04 / KEEP CLOSE" title={t('home.resources')} subtitle={t('home.resourcesSub')} link="/resources" linkLabel={t('common.explore')} /><Grid container spacing={2.5}>{content.resources.map((item) => <Grid key={item.id} size={{ xs: 12, md: 4 }}><ResourceCard item={item} /></Grid>)}</Grid></Container></section>
-    <section className="newsletter-section"><Container maxWidth="md"><Stack alignItems="center" textAlign="center"><Typography className="eyebrow">FIELD NOTES, OCCASIONALLY</Typography><Typography variant="h3" sx={{ mt: 1 }}>{t('home.newsletter')}</Typography><Typography color="text.secondary" sx={{ mt: 1, maxWidth: 520 }}>{t('home.newsletterSub')}</Typography><Box component="form" onSubmit={subscribe} sx={{ mt: 3, width: 'min(100%, 440px)' }}><TextField fullWidth type="email" required value={email} onChange={(event) => { setEmail(event.target.value); setSubscribed(false); }} placeholder={t('home.email')} InputProps={{ endAdornment: <InputAdornment position="end"><Button type="submit" variant="contained" endIcon={<MailOutlineRoundedIcon />}>{t('home.subscribe')}</Button></InputAdornment> }} />{subscribed && <Typography variant="caption" sx={{ display: 'block', mt: 1, color: 'rgba(255,255,255,.8)' }}>Your email app will open with a ready-to-send subscription request.</Typography>}</Box></Stack></Container></section>
-  </>;
+  const { t } = useTranslation();
+  const { language } = useLanguage();
+  const navigate = useNavigate();
+  const [search, setSearch] = useState('');
+  const [content, setContent] = useState(() => Object.fromEntries(sources.map(({ type, samples, limit }) => [
+    type, isSupabaseConfigured ? { status: 'loading', items: [] } : { status: 'ready', items: preview(samples, limit) },
+  ])));
+
+  useEffect(() => {
+    if (!isSupabaseConfigured) return;
+    let active = true;
+    for (const { type, limit } of sources) {
+      listContent(type, { language }).then((items) => {
+        if (active) {
+          setContent((current) => ({ ...current, [type]: { status: 'ready', items: preview(items, limit) } }));
+        }
+      }).catch(() => {
+        if (active) {
+          setContent((current) => ({ ...current, [type]: { status: 'error', items: current[type].items } }));
+        }
+      });
+    }
+    return () => { active = false; };
+  }, [language]);
+
+const [featured, ...latest] = newestFirst(content.news.items);
+
+  function searchNews(event) {
+    event.preventDefault();
+    const query = search.trim();
+    if (query) navigate({ pathname: '/news', search: new URLSearchParams({ q: query }).toString(), hash: '#latest-news' });
+  }
+
+  function statusLabel(type) {
+    const { status } = content[type];
+    if (status === 'loading') return t('common.loading');
+    return t('homeLearning.' + (status === 'error' ? 'unavailable' : type + 'Empty'));
+  }
+
+  return (
+    <div className="editorial-home">
+      <Container maxWidth="lg">
+        <HomeMasthead />
+
+        <nav className="editorial-destinations" aria-label={t('homeLearning.choose')}>
+          {destinations.map(({ path, title, text, Icon }) => (
+            <Link to={path} className="editorial-destination" key={path}>
+              <span className="editorial-destination-icon"><Icon aria-hidden="true" /></span>
+              <span className="editorial-destination-copy">
+                <strong>{t('homeLearning.' + title)}</strong>
+                <span>{t('homeLearning.' + text)}</span>
+              </span>
+              <ArrowForwardRoundedIcon aria-hidden="true" />
+            </Link>
+          ))}
+        </nav>
+
+        <FarmBrief />
+
+        <form className="editorial-search" role="search" aria-label={t('homeLearning.search')} onSubmit={searchNews}>
+          <SearchBar value={search} onChange={setSearch} label={t('homeLearning.search')} />
+          <Button type="submit" variant="contained" disabled={!search.trim()}>{t('nav.search')}</Button>
+        </form>
+
+        <div className="editorial-front-grid">
+          <section className="editorial-lead" aria-labelledby="editorial-lead-title">
+            <h2 id="editorial-lead-title" className="editorial-section-title">
+              {t(featured ? 'home.featured' : 'newsLanding.latest')}
+            </h2>
+            {featured ? <NewsCard item={featured} featured /> : (
+              <p className="editorial-status" role="status">{statusLabel('news')}</p>
+            )}
+          </section>
+          {featured && (
+            <section className="editorial-latest" aria-labelledby="editorial-latest-title">
+              <h2 id="editorial-latest-title" className="editorial-section-title">{t('newsLanding.latest')}</h2>
+              {latest.length > 0 && (
+                <ul>
+                  {latest.map((item) => {
+                    const category = categories.find((topic) => topic.id === item.category_id);
+                    const date = item.date || item.created_at;
+                    return (
+                      <li key={item.id}>
+                        <Link to={'/news/' + item.slug} className="editorial-headline">
+                          <div className="editorial-headline-text">
+                            <span className="editorial-headline-meta">
+                              {[localized(category, 'name', language), item.sample && t('common.sample')].filter(Boolean).join(' · ')}
+                            </span>
+                            <h3>{localized(item, 'title', language)}</h3>
+                            {date && <span className="editorial-date">{formatDate(date, language)}</span>}
+                          </div>
+                          {item.image && (
+                            <img key={item.image} src={item.image} alt="" loading="lazy" onError={(event) => { event.currentTarget.hidden = true; }} />
+                          )}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+              <Link className="editorial-arrow-link" to="/news">{t('homeLearning.allNews')} <ArrowForwardRoundedIcon aria-hidden="true" /></Link>
+            </section>
+          )}
+        </div>
+
+        <section className="editorial-section" aria-labelledby="editorial-videos-title">
+          <div className="editorial-section-heading">
+            <h2 id="editorial-videos-title" className="editorial-section-title">{t('newsLanding.watch')}</h2>
+            <Link className="editorial-arrow-link" to="/videos">{t('videos.videoLibrary')} <ArrowForwardRoundedIcon aria-hidden="true" /></Link>
+          </div>
+          {content.videos.items.length > 0 ? (
+            <div className="editorial-video-grid">
+              {content.videos.items.map((item) => <VideoCard key={item.id} item={item} />)}
+            </div>
+          ) : <p className="editorial-status" role="status">{statusLabel('videos')}</p>}
+        </section>
+      </Container>
+    </div>
+  );
 }

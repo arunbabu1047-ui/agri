@@ -1,15 +1,22 @@
 export const categories = [
-  { id: 'crop', name_en: 'Crop cultivation', name_ta: 'பயிர் சாகுபடி', icon: '🌾', color: '#e7f3df' },
-  { id: 'soil', name_en: 'Soil & water', name_ta: 'மண் மற்றும் நீர்', icon: '🪨', color: '#f7ead7' },
-  { id: 'organic', name_en: 'Organic farming', name_ta: 'இயற்கை விவசாயம்', icon: '🍃', color: '#e0f1e5' },
-  { id: 'livestock', name_en: 'Livestock', name_ta: 'கால்நடை', icon: '🐄', color: '#f7e5dc' },
-  { id: 'machinery', name_en: 'Farm machinery', name_ta: 'விவசாய இயந்திரங்கள்', icon: '🚜', color: '#e8eddf' },
-  { id: 'technology', name_en: 'Agri technology', name_ta: 'விவசாயத் தொழில்நுட்பம்', icon: '📡', color: '#e3eef1' },
+  { id: 'crop', name_en: 'Crop Cultivation', name_ta: '\u0baa\u0baf\u0bbf\u0bb0\u0bcd \u0b9a\u0bbe\u0b95\u0bc1\u0baa\u0b9f\u0bbf', icon: '\u{1F33E}', color: '#e7f3df' },
+  { id: 'farming-tips', name_en: 'Farming Tips', name_ta: '\u0bb5\u0bbf\u0bb5\u0b9a\u0bbe\u0baf\u0b95\u0bcd \u0b95\u0bc1\u0bb1\u0bbf\u0baa\u0bcd\u0baa\u0bc1\u0b95\u0bb3\u0bcd', icon: '\u{1F4A1}', color: '#f4efd9' },
+  { id: 'government-schemes', name_en: 'Government Schemes', name_ta: '\u0b85\u0bb0\u0b9a\u0bc1 \u0ba4\u0bbf\u0b9f\u0bcd\u0b9f\u0b99\u0bcd\u0b95\u0bb3\u0bcd', icon: '\u{1F3DB}', color: '#e9edf4' },
+  { id: 'market-prices', name_en: 'Market Prices', name_ta: '\u0b9a\u0ba8\u0bcd\u0ba4\u0bc8 \u0bb5\u0bbf\u0bb2\u0bc8\u0b95\u0bb3\u0bcd', icon: '\u{1F4B9}', color: '#f7ead7' },
+  { id: 'organic', name_en: 'Organic Farming', name_ta: '\u0b87\u0baf\u0bb1\u0bcd\u0b95\u0bc8 \u0bb5\u0bbf\u0bb5\u0b9a\u0bbe\u0baf\u0bae\u0bcd', icon: '\u{1F33F}', color: '#e0f1e5' },
+  { id: 'weather', name_en: 'Weather', name_ta: '\u0bb5\u0bbe\u0ba9\u0bbf\u0bb2\u0bc8', icon: '\u{1F324}', color: '#e3eef1' },
+  { id: 'technology', name_en: 'Technology', name_ta: '\u0ba4\u0bca\u0bb4\u0bbf\u0bb2\u0bcd\u0ba8\u0bc1\u0b9f\u0bcd\u0baa\u0bae\u0bcd', icon: '\u{1F4F1}', color: '#e3eef1' },
+  { id: 'irrigation', name_en: 'Irrigation', name_ta: '\u0baa\u0bbe\u0b9a\u0ba9\u0bae\u0bcd', icon: '\u{1F4A7}', color: '#e3eef1' },
+  { id: 'crop-protection', name_en: 'Crop Protection', name_ta: '\u0baa\u0baf\u0bbf\u0bb0\u0bcd \u0baa\u0bbe\u0ba4\u0bc1\u0b95\u0bbe\u0baa\u0bcd\u0baa\u0bc1', icon: '\u{1F6E1}', color: '#f7e5dc' },
+  { id: 'soil', name_en: 'Soil Management', name_ta: '\u0bae\u0ba3\u0bcd \u0bae\u0bc7\u0bb2\u0bbe\u0ba3\u0bcd\u0bae\u0bc8', icon: '\u{1F331}', color: '#f7ead7' },
+  { id: 'seasonal-farming', name_en: 'Seasonal Farming', name_ta: '\u0baa\u0bb0\u0bc1\u0bb5\u0b95\u0bbe\u0bb2 \u0bb5\u0bbf\u0bb5\u0b9a\u0bbe\u0baf\u0bae\u0bcd', icon: '\u{1F342}', color: '#e0f1e5' },
+  { id: 'machinery', name_en: 'Agricultural Machinery', name_ta: '\u0bb5\u0bbf\u0bb5\u0b9a\u0bbe\u0baf இ\u0baf\u0ba8\u0bcd\u0ba4\u0bbf\u0bb0\u0b99\u0bcd\u0b95\u0bb3\u0bcd', icon: '\u{1F69C}', color: '#e8eddf' },
+  { id: 'agricultural-business', name_en: 'Agricultural Business', name_ta: '\u0bb5\u0bbf\u0bb5\u0b9a\u0bbe\u0baf \u0bb5\u0ba3\u0bbf\u0b95\u0bae\u0bcd', icon: '\u{1F4BC}', color: '#f4efd9' },
+  { id: 'water-management', name_en: 'Water Management', name_ta: '\u0ba8\u0bc0\u0bb0\u0bcd \u0bae\u0bc7\u0bb2\u0bbe\u0ba3\u0bcd\u0bae\u0bc8', icon: '\u{1F30A}', color: '#e3eef1' },
 ];
-
 export const news = [
   {
-    id: 'soil-health-basics', slug: 'soil-health-basics-for-a-stronger-season', category_id: 'soil', status: 'published', author_name: 'Agri Pulse editorial team', date: '2025-06-18', read_time: '6 min', tags: ['soil', 'field notes'], sample: true,
+    id: 'soil-health-basics', slug: 'soil-health-basics-for-a-stronger-season', category_id: 'soil', status: 'published', author_name: 'AB Agri', date: '2025-06-18', read_time: '6 min', tags: ['soil', 'field notes'], sample: true,
     image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=85',
     title_en: 'A simple soil health check before the next season', title_ta: 'அடுத்த பருவத்திற்கு முன் மண் நலத்தை அறியும் எளிய வழி',
     summary_en: 'A field-friendly starting point for observing soil structure, moisture, and organic matter before making the next crop plan.', summary_ta: 'அடுத்த பயிர்த் திட்டத்தை உருவாக்கும் முன் மண்ணின் அமைப்பு, ஈரப்பதம் மற்றும் கரிமப் பொருளை கவனிக்க உதவும் எளிய தொடக்கம்.',
@@ -45,7 +52,7 @@ export const videos = [
 export const resources = [
   { id: 'soil-observation-sheet', category_id: 'soil', type: 'guide', status: 'published', sample: true, title_en: 'Soil observation sheet', title_ta: 'மண் கவனிப்பு தாள்', description_en: 'A printable one-page worksheet for noting soil structure, moisture, roots, and field differences.', description_ta: 'மண் அமைப்பு, ஈரப்பதம், வேர்கள் மற்றும் வயல் வேறுபாடுகளைப் பதிவு செய்யும் ஒரு பக்கப் பணித்தாள்.', source: 'Agri Pulse sample resource', icon: 'description' },
   { id: 'crop-planning-notes', category_id: 'crop', type: 'article', status: 'published', sample: true, title_en: 'Crop planning: questions to bring to a field visit', title_ta: 'பயிர்த் திட்டமிடல்: களப் பார்வைக்குக் கொண்டு செல்ல வேண்டிய கேள்விகள்', description_en: 'A short reference article for turning observations into a next-step conversation.', description_ta: 'கவனிப்புகளை அடுத்த கட்ட உரையாடலாக மாற்றும் குறுகிய குறிப்பு.', source: 'Agri Pulse sample resource', icon: 'article' },
-  { id: 'open-agriculture-library', category_id: 'technology', type: 'link', status: 'published', sample: true, title_en: 'Explore the open agriculture library', title_ta: 'திறந்த விவசாய நூலகத்தைப் பாருங்கள்', description_en: 'A placeholder for a vetted external reference link configured by an administrator.', description_ta: 'நிர்வாகி அமைக்கும் சரிபார்க்கப்பட்ட வெளிப்புறக் குறிப்பு இணைப்புக்கான இடம்.', source: 'External reference placeholder', icon: 'open' },
+  { id: 'open-agriculture-library', category_id: 'technology', type: 'link', status: 'published', sample: true, title_en: 'Open agriculture library', title_ta: 'திறந்த விவசாய நூலகம்', description_en: 'An example listing for a collection of open agriculture references.', description_ta: 'திறந்த விவசாயக் குறிப்புகளின் தொகுப்புக்கான மாதிரிப் பதிவு.', source: 'External reference placeholder', icon: 'open' },
 ];
 
 export const stats = [

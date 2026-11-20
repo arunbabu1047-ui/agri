@@ -7,3 +7,17 @@
 .brand-mark svg {
   display: none;
 }
+
+.site-nav .brand-mark,
+.site-footer .brand-mark,
+.admin-logo .brand-mark {
+  background: #d7e8bb !important;
+  box-shadow: 0 4px 12px rgba(38, 83, 50, .14);
+}
+
+.site-nav .brand-mark img,
+.site-footer .brand-mark img,
+.admin-logo .brand-mark img {
+  padding: 0;
+  filter: grayscale(1) sepia(1) hue-rotate(55deg) saturate(.92);
+}

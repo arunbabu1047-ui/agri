@@ -1,22 +1,48 @@
-import { apiRequest, clearAccessToken, getAccessToken, isApiConfigured, setAccessToken } from '../lib/api';
+import { isSupabaseConfigured, supabase } from '../lib/supabase';
 
-export async function signIn(email, password, remember = true) {
-  if (!isApiConfigured) throw new Error('Python API is not configured. Add VITE_API_URL to .env.');
-  const result = await apiRequest('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) });
-  setAccessToken(result.access_token, remember);
-  return result;
+function requireSupabase() {
+  if (!isSupabaseConfigured) throw new Error('Supabase is not configured. Add the project URL and publishable key to .env.local.');
+}
+
+export async function signIn(email, password) {
+  requireSupabase();
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) throw error;
+  return data;
 }
 
 export async function signOut() {
-  try {
-    if (isApiConfigured && getAccessToken()) await apiRequest("/auth/logout", { method: "POST" });
-  } catch {
-    // Always clear the browser session even if the API is temporarily unavailable.
-  } finally {
-    clearAccessToken();
-  }
+  if (!isSupabaseConfigured) return;
+  const { error } = await supabase.auth.signOut();
+  if (error) throw error;
 }
-export async function requestPasswordReset(email) { if (!isApiConfigured) throw new Error('Python API is not configured. Add VITE_API_URL to .env.'); return apiRequest('/auth/password-reset/request', { method: 'POST', body: JSON.stringify({ email }) }); }
-export async function confirmPasswordReset(token, password) { if (!isApiConfigured) throw new Error('Python API is not configured. Add VITE_API_URL to .env.'); return apiRequest('/auth/password-reset/confirm', { method: 'POST', body: JSON.stringify({ token, password }) }); }
-export async function getProfile() { return getAccessToken() ? apiRequest('/auth/me') : null; }
-export async function updateProfile(full_name) { return apiRequest('/auth/profile', { method: 'PATCH', body: JSON.stringify({ full_name }) }); }
+
+export async function requestPasswordReset(email) {
+  requireSupabase();
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${window.location.origin}/admin/reset-password`,
+  });
+  if (error) throw error;
+}
+
+export async function confirmPasswordReset(_token, password) {
+  requireSupabase();
+  const { error } = await supabase.auth.updateUser({ password });
+  if (error) throw error;
+}
+
+export async function getProfile(userId) {
+  if (!isSupabaseConfigured || !userId) return null;
+  const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
+  if (error) throw error;
+  return data;
+}
+
+export async function updateProfile(full_name) {
+  requireSupabase();
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  if (userError) throw userError;
+  const { data, error } = await supabase.from('profiles').update({ full_name, updated_at: new Date().toISOString() }).eq('id', user.id).select().single();
+  if (error) throw error;
+  return data;
+}

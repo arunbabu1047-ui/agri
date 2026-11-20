@@ -1,0 +1,399 @@
+@font-face {
+  font-family: 'Hind Madurai';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/hind-madurai-tamil-400.woff2') format('woff2');
+  unicode-range: U+0964-0965, U+0B82-0BFA, U+200C-200D, U+20B9, U+25CC;
+}
+
+@font-face {
+  font-family: 'Hind Madurai';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/hind-madurai-tamil-600.woff2') format('woff2');
+  unicode-range: U+0964-0965, U+0B82-0BFA, U+200C-200D, U+20B9, U+25CC;
+}
+
+.editorial-home {
+  --editorial-green: #31583d;
+  --editorial-line: #dce4d7;
+  --editorial-surface: #fffefa;
+  --editorial-muted: #536052;
+  --editorial-section-size: clamp(1.125rem, 1.7vw, 1.4rem);
+  padding: clamp(22px, 3vw, 40px) 0 56px;
+  color: #263c30;
+  background: #f8f9f3;
+  font-family: 'DM Sans', 'Segoe UI', sans-serif;
+}
+
+:lang(ta) .editorial-home {
+  font-family: 'Hind Madurai', 'DM Sans', 'Noto Sans Tamil', 'Segoe UI', sans-serif;
+}
+
+.editorial-home :is(.MuiTypography-root, .MuiInputBase-root, .MuiButton-root, .MuiChip-root) {
+  font-family: inherit;
+}
+
+.editorial-masthead {
+  position: relative;
+  display: flex;
+  min-height: clamp(190px, 18.5vw, 246px);
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid #d8e5d3;
+  border-radius: 16px;
+  color: #274735;
+  background: #e9f1e3;
+}
+
+.editorial-masthead-copy {
+  position: relative;
+  z-index: 1;
+  width: min(55%, 620px);
+  padding: clamp(18px, 2.6vw, 28px);
+}
+
+.editorial-masthead-media {
+  position: absolute;
+  inset: 0 0 0 44%;
+  background: #9aac83 url('/cornfield-poster.webp') center / cover no-repeat;
+  mask-image: linear-gradient(to right, transparent, #000 48%);
+}
+
+.editorial-masthead-media video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.editorial-masthead h1 {
+  margin: 0;
+  font-size: clamp(1.65rem, 2.8vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.18;
+  letter-spacing: -.035em;
+  text-wrap: balance;
+}
+
+:lang(ta) .editorial-masthead h1 {
+  font-size: clamp(1.5rem, 2.3vw, 2.125rem);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: normal;
+}
+
+.editorial-masthead p {
+  max-width: 64ch;
+  margin: 10px 0 0;
+  color: #3c5746;
+  line-height: 1.6;
+}
+
+.editorial-destinations {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.editorial-destination {
+  display: grid;
+  min-height: 76px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--editorial-line);
+  border-radius: 12px;
+  color: var(--editorial-green);
+  background: var(--editorial-surface);
+}
+
+.editorial-destination:hover {
+  border-color: #b6c0aa;
+  background: #f7f8f2;
+}
+
+.editorial-destination-icon {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border-radius: 10px;
+  color: #456346;
+  background: #e8eee1;
+}
+
+.editorial-destination:nth-child(2) .editorial-destination-icon {
+  color: #46645f;
+  background: #e6eeeb;
+}
+
+.editorial-destination:nth-child(3) .editorial-destination-icon {
+  color: #725a35;
+  background: #f5eddb;
+}
+
+.editorial-destination-copy {
+  display: grid;
+  gap: 3px;
+}
+
+.editorial-destination-copy strong {
+  font-weight: 650;
+}
+
+.editorial-destination-copy > span {
+  color: var(--editorial-muted);
+  font-size: .86rem;
+  line-height: 1.4;
+}
+
+.editorial-search {
+  display: flex;
+  width: min(100%, 460px);
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.editorial-search .MuiTextField-root {
+  min-width: 0;
+}
+
+.editorial-search .MuiOutlinedInput-root {
+  min-height: 44px;
+  background: var(--editorial-surface);
+}
+
+.editorial-search .MuiButton-root {
+  min-height: 44px;
+  padding-inline: 14px;
+  background: #52694a;
+}
+
+.editorial-search .MuiButton-root:hover {
+  background: var(--editorial-green);
+}
+
+.editorial-search .MuiButton-root.Mui-disabled {
+  color: #55634e;
+  background: #e5e9de;
+}
+
+.editorial-latest ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.editorial-arrow-link:hover {
+  text-decoration: underline;
+}
+
+.editorial-front-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(18px, 3vw, 32px);
+  margin-top: 28px;
+}
+
+.editorial-section-title {
+  margin: 0;
+  color: var(--editorial-green);
+  font-size: var(--editorial-section-size);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+:lang(ta) .editorial-section-title {
+  font-weight: 600;
+}
+
+.editorial-lead .featured-card {
+  height: auto;
+  margin-top: 12px;
+  border-color: var(--editorial-line);
+  border-radius: 16px;
+  box-shadow: none;
+  background: var(--editorial-surface);
+}
+
+.editorial-lead .featured-card:hover {
+  border-color: #b5c7aa;
+  transform: none;
+}
+
+.editorial-lead .MuiCardActionArea-root {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.editorial-lead .MuiCardContent-root {
+  order: -1;
+}
+
+.editorial-lead .MuiTypography-h4 {
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+  font-weight: 650;
+  line-height: 1.3;
+}
+
+:lang(ta) .editorial-lead .MuiTypography-h4 {
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.editorial-lead .MuiCardMedia-root {
+  height: clamp(186px, 24vw, 324px);
+  object-fit: cover;
+}
+
+.editorial-latest {
+  padding: 16px 18px;
+  border: 1px solid var(--editorial-line);
+  border-top: 4px solid #a3ad8c;
+  border-radius: 12px;
+  background: var(--editorial-surface);
+}
+
+.editorial-latest ul {
+  margin-top: 8px;
+}
+
+.editorial-latest li {
+  border-bottom: 1px solid var(--editorial-line);
+}
+
+.editorial-headline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 0;
+}
+
+.editorial-headline-text {
+  min-width: 0;
+  flex: 1;
+}
+
+.editorial-headline h3 {
+  margin: 4px 0;
+  font-size: 1rem;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.editorial-headline:hover h3 {
+  text-decoration: underline;
+}
+
+.editorial-headline img {
+  width: 74px;
+  height: 58px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.editorial-headline-meta,
+.editorial-date {
+  color: var(--muted);
+  font-size: .76rem;
+}
+
+.editorial-headline-meta {
+  color: var(--editorial-green);
+  font-weight: 750;
+}
+
+.editorial-arrow-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--editorial-green);
+  font-size: .88rem;
+  font-weight: 800;
+}
+
+.editorial-latest > .editorial-arrow-link {
+  margin-top: 14px;
+}
+
+.editorial-arrow-link svg {
+  font-size: 1rem;
+}
+
+.editorial-section {
+  margin-top: 28px;
+  padding-top: 16px;
+  border-top: 1px solid var(--editorial-line);
+}
+
+.editorial-section-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px 18px;
+}
+
+.editorial-video-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.editorial-video-grid .MuiCard-root {
+  border-radius: 13px;
+  box-shadow: none;
+}
+
+.editorial-video-grid .MuiCardMedia-root {
+  height: 135px;
+  object-fit: cover;
+}
+
+.editorial-video-grid .MuiTypography-h6 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.editorial-status {
+  color: var(--muted);
+}
+
+.editorial-home a:focus-visible {
+  outline: 2px solid #426b45;
+  outline-offset: 3px;
+}
+
+@media (max-width: 740px) {
+  .editorial-masthead {
+    display: block;
+    min-height: 0;
+  }
+
+  .editorial-masthead-copy {
+    width: 100%;
+  }
+
+  .editorial-masthead-media {
+    position: relative;
+    inset: auto;
+    height: clamp(140px, 34vw, 210px);
+    mask-image: none;
+  }
+
+  .editorial-destinations,
+  .editorial-front-grid,
+  .editorial-video-grid {
+    grid-template-columns: 1fr;
+  }
+}

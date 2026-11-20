@@ -1,0 +1,35 @@
+.admin-news-editor {
+  --editor-green: #235535;
+  --editor-accent: #a2461d;
+  --editor-ink: #192d20;
+}
+
+.admin-news-editor > .MuiStack-root:first-child {
+  padding: clamp(20px, 2.7vw, 30px);
+  border-radius: 18px;
+  color: #fffefa;
+  background: linear-gradient(125deg, #1a462b, var(--editor-green) 68%, #2d603b);
+}
+
+.admin-news-editor > .MuiStack-root:first-child .eyebrow { color: #f3a575; }
+.admin-news-editor > .MuiStack-root:first-child h3,
+.admin-news-editor > .MuiStack-root:first-child .MuiTypography-colorTextSecondary { color: #fffefa; }
+.admin-news-editor > .MuiStack-root:first-child h3 { font-size: clamp(1.8rem, 3.6vw, 2.85rem); line-height: 1.1; }
+.admin-news-editor .editor-publish-hint { margin-top: 8px; color: #e3eddc; font-size: .86rem; }
+.admin-news-editor > .MuiStack-root:first-child .MuiButton-outlined { border-color: rgba(255,255,255,.68); color: #fffefa; }
+.admin-news-editor > .MuiStack-root:first-child .MuiButton-outlined:hover { border-color: #fffefa; background: rgba(255,255,255,.1); }
+.admin-news-editor > .MuiStack-root:first-child .MuiButton-contained { color: #fffefa; background: #a2461d; }
+.admin-news-editor > .MuiStack-root:first-child .MuiButton-contained:hover { background: #853610; }
+.admin-news-editor > .MuiGrid-root > .MuiGrid-root > .MuiCard-root { border-color: #e3e7dc; border-radius: 16px; background: #fffefa; box-shadow: none; }
+.admin-news-editor .MuiCardContent-root { padding: clamp(18px, 2vw, 26px); }
+.admin-news-editor .MuiCardContent-root > .MuiTypography-h6 { color: var(--editor-green); font-weight: 800; }
+.admin-news-editor .MuiOutlinedInput-root { background: #fff; }
+.admin-news-editor .MuiInputBase-input { font-size: .95rem; }
+.admin-news-editor .MuiInputLabel-root { font-size: .95rem; }
+.admin-news-editor .MuiButton-contained { background: var(--editor-green); }
+.admin-news-editor .MuiButton-contained:hover { background: #19452d; }
+.admin-news-editor .MuiButton-outlined { border-color: #b8cbb7; color: var(--editor-green); }
+
+@media (max-width: 600px) {
+  .admin-news-editor > .MuiStack-root:first-child .MuiButton-root { width: 100%; }
+}

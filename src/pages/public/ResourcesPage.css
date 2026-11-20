@@ -1,0 +1,184 @@
+.public-resources {
+  --resource-green: #235535;
+  --resource-rust: #a2461d;
+  min-height: calc(100svh - 76px);
+  padding: clamp(16px, 2.6vw, 32px) 0 64px;
+  color: #192d20;
+  background: #f8f7ed;
+}
+
+.resources-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: clamp(16px, 4vw, 48px);
+  padding: clamp(16px, 2.6vw, 28px);
+  border-radius: 20px;
+  color: var(--paper);
+  background: linear-gradient(125deg, #1a462b, var(--resource-green) 66%, #2d603b);
+}
+
+.resources-hero-copy {
+  align-self: center;
+  padding: 10px clamp(4px, 1.5vw, 18px);
+}
+
+.resources-hero h1 {
+  margin: 0;
+  font-size: clamp(1.8rem, 3.6vw, 2.85rem);
+  line-height: 1.1;
+  letter-spacing: -.035em;
+  text-wrap: balance;
+}
+
+.resources-hero p {
+  max-width: 54ch;
+  margin: 12px 0 16px;
+  color: #e3eddc;
+}
+
+.resources-cta.MuiButton-root {
+  padding-inline: 15px;
+  border-radius: 999px;
+  background: var(--resource-rust);
+}
+
+.resources-cta.MuiButton-root:hover {
+  background: #853610;
+}
+
+.resource-formats {
+  display: grid;
+  align-content: center;
+  gap: 13px;
+  padding: clamp(16px, 2.7vw, 28px);
+  border-radius: 15px;
+  color: #172e1d;
+  background: #adc69a;
+}
+
+.resource-formats h2,
+.resource-library-header h2 {
+  margin: 0;
+  font-size: clamp(1.15rem, 2vw, 1.5rem);
+}
+
+.resource-format-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.resource-format-buttons .MuiButton-root {
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid transparent;
+  color: #24472f;
+  background: #eaf1e4;
+  overflow-wrap: anywhere;
+}
+
+.resource-format-buttons .MuiButton-root:hover {
+  border-color: #507c57;
+}
+
+.resource-format-buttons .MuiButton-root[aria-pressed="true"] {
+  color: #fffefa;
+  background: var(--resource-green);
+}
+
+.resource-library {
+  margin-top: 30px;
+  scroll-margin-top: 100px;
+}
+
+.resource-library-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.resource-library-filters {
+  display: flex;
+  width: min(100%, 440px);
+  gap: 8px;
+}
+
+.resource-library-filters .MuiTextField-root {
+  min-width: 0;
+}
+
+.resource-library-filters .MuiOutlinedInput-root,
+.resource-library-filters select {
+  min-height: 42px;
+  background: var(--paper);
+}
+
+.resource-library-filters select {
+  max-width: min(48%, 180px);
+  padding: 0 8px;
+  border: 1px solid #b9bfb4;
+  border-radius: 13px;
+  color: inherit;
+}
+
+.resource-library-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.resource-library-grid .resource-card {
+  border-color: #e3e7dc;
+  border-radius: 16px;
+  background: var(--paper);
+  box-shadow: none;
+}
+
+.resource-library-grid .resource-card:hover {
+  transform: none;
+}
+
+.resource-library-grid .resource-card:has(a:hover) {
+  border-color: #b8c8ae;
+}
+
+.resource-library-grid .resource-icon {
+  border-color: #d7e5cd;
+  border-radius: 12px;
+  color: var(--resource-green);
+  background: #eaf1e4;
+}
+
+.resource-card-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--resource-rust);
+  font-weight: 800;
+}
+
+.resource-card-link:hover {
+  text-decoration: underline;
+}
+
+.resources-hero a:focus-visible,
+.resource-format-buttons .MuiButton-root:focus-visible {
+  outline: 2px solid #eaf1e4;
+  outline-offset: 3px;
+}
+
+@media (max-width: 860px) {
+  .resource-library-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 660px) {
+  .resources-hero,
+  .resource-library-grid {
+    grid-template-columns: 1fr;
+  }
+}

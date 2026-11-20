@@ -1,11 +1,22 @@
 import { ButtonGroup, Button } from '@mui/material';
 import { useLanguage } from '../../contexts/LanguageContext';
 
+const labels = {
+  ta: '\u0ba4\u0bae\u0bbf\u0bb4\u0bcd',
+  en: 'English',
+};
+
 export default function LanguageSwitcher() {
   const { language, setLanguage } = useLanguage();
-  return <ButtonGroup size="small" variant="text" aria-label="Language selector" className="language-switcher">
-    <Button onClick={() => setLanguage('ta')} variant={language === 'ta' ? 'contained' : 'text'}>தமிழ்</Button>
-    <Button onClick={() => setLanguage('kn')} variant={language === 'kn' ? 'contained' : 'text'}>{'\u0c95\u0ca8\u0ccd\u0ca8\u0ca1'}</Button>
-    <Button onClick={() => setLanguage('en')} variant={language === 'en' ? 'contained' : 'text'}>English</Button>
-  </ButtonGroup>;
+  const options = ['ta', 'en'];
+
+  return (
+    <ButtonGroup size="small" variant="text" aria-label="Language selector" className="language-switcher">
+      {options.map((code) => (
+        <Button key={code} onClick={() => setLanguage(code)} aria-pressed={language === code} variant={language === code ? 'contained' : 'text'}>
+          {labels[code]}
+        </Button>
+      ))}
+    </ButtonGroup>
+  );
 }

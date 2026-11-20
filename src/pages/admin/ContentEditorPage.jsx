@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
-import { Alert, Box, Button, Card, CardContent, FormControl, Grid, IconButton, InputLabel, LinearProgress, MenuItem, Select, Snackbar, Stack, TextField, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Alert, Box, Button, Card, CardContent, FormControl, FormHelperText, Grid, IconButton, InputLabel, LinearProgress, MenuItem, Select, Snackbar, Stack, TextField, Typography } from '@mui/material';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
+import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
 import SaveRoundedIcon from '@mui/icons-material/SaveRounded';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -11,8 +12,17 @@ import { getContent, listCategories, saveContent } from '../../services/contentS
 import { uploadFile } from '../../services/storageService';
 import { slugify } from '../../utils/formatters';
 import { isValidUrl } from '../../utils/validators';
+import { newsStoryIdeas } from '../../data/newsStoryIdeas';
+import './ContentEditorPage.css';
 
-const blank = { title_ta: '', title_en: '', title_kn: '', summary_ta: '', summary_en: '', summary_kn: '', body_ta: '', body_en: '', body_kn: '', description_ta: '', description_en: '', description_kn: '', category_id: 'crop', tags: '', source_name: '', source_url: '', youtube_url: '', spoken_language: 'Tamil', type: 'guide', status: 'draft', cover_image_url: '', thumbnail_url: '', video_url: '', file_url: '', external_url: '', file_name: '' };
+const blank = { title_ta: '', title_en: '', title_kn: '', summary_ta: '', summary_en: '', summary_kn: '', body_ta: '', body_en: '', body_kn: '', description_ta: '', description_en: '', description_kn: '', category_id: 'crop', district: '', published_at: '', tags: '', source_name: '', source_url: '', youtube_url: '', spoken_language: 'Tamil', type: 'guide', status: 'draft', cover_image_url: '', thumbnail_url: '', video_url: '', file_url: '', external_url: '', file_name: '' };
+
+function toLocalDateTime(value) {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+}
 
 const bucketFor = { news: 'images', videos: 'videos', resources: 'documents' };
 
@@ -28,13 +38,13 @@ export default function ContentEditorPage({ type }) {
   const [dirty, setDirty] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [editingLanguage, setEditingLanguage] = useState('en');
+  const [selectedStoryIdea, setSelectedStoryIdea] = useState('');
   const [toast, setToast] = useState({ open: false, severity: 'info', message: '' });
   const singular = type === 'news' ? 'story' : type === 'videos' ? 'video' : 'resource';
   const showToast = (message, severity = 'error') => setToast({ open: true, severity, message });
   useEffect(() => {
     listCategories().then(setCategories).catch((err) => setError(err.message));
-    if (id) getContent(type, id).then((item) => item && setForm((current) => ({ ...current, ...item, tags: Array.isArray(item.tags) ? item.tags.join(', ') : item.tags || '' }))).catch((err) => setError(err.message));
+    if (id) getContent(type, id).then((item) => item && setForm((current) => ({ ...current, ...item, title_en: item.title_en || item.title_ta || '', summary_en: item.summary_en || item.summary_ta || '', body_en: item.body_en || item.body_ta || '', description_en: item.description_en || item.description_ta || '', published_at: toLocalDateTime(item.published_at), tags: Array.isArray(item.tags) ? item.tags.join(', ') : item.tags || '' }))).catch((err) => setError(err.message));
   }, [id, type]);
 
   useEffect(() => {
@@ -45,25 +55,38 @@ export default function ContentEditorPage({ type }) {
 
   const update = (key, value) => { setDirty(true); setForm((current) => ({ ...current, [key]: value })); };
 
+  const applyStoryIdea = (ideaId) => {
+    setSelectedStoryIdea(ideaId);
+    const idea = newsStoryIdeas.find((item) => item.title === ideaId);
+    if (!idea) return;
+    setDirty(true);
+    setForm((current) => ({ ...current, title_en: idea.title, category_id: idea.category_id }));
+  };
+
   const chooseFile = async (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
     setError(''); setUploading(true); setUploadProgress(10); update('file_name', file.name);
     try {
-      const url = await uploadFile(bucketFor[type], file, '', (progress) => setUploadProgress(progress));
-      const key = type === 'news' ? 'cover_image_url' : type === 'videos' ? 'thumbnail_url' : 'file_url';
+      const uploadBucket = type === 'videos' && file.type.startsWith('image/') ? 'images' : bucketFor[type];
+      const url = await uploadFile(uploadBucket, file, '', (progress) => setUploadProgress(progress));
+      const key = type === 'news' ? 'cover_image_url' : type === 'videos' ? (file.type.startsWith('video/') ? 'video_url' : 'thumbnail_url') : 'file_url';
       update(key, url);
       setUploadProgress(100);
     } catch (err) { setError(err.message); showToast(err.message); } finally { setUploading(false); }
   };
 
-  const editingLanguageName = editingLanguage === 'ta' ? 'Tamil' : editingLanguage === 'kn' ? 'Kannada' : 'English';
-  const contentKey = (fieldName) => `${fieldName}_${editingLanguage}`;
-  const title = form[contentKey('title')] || form.title_en || form.title_ta || form.title_kn;
+  const title = form.title_en || form.title_ta || form.title_kn;
   const validate = (nextStatus, values) => {
-    const titleValue = values[contentKey('title')];
-    if (!titleValue?.trim()) return `Enter a ${editingLanguageName.toLowerCase()} title.`;
-    if (type === 'news' && nextStatus === 'published' && (!values[contentKey('summary')]?.trim() || !values[contentKey('body')]?.trim())) return `Complete the ${editingLanguageName.toLowerCase()} summary and article before publishing.`;
+    if (type === 'news') {
+      const locales = ['en', 'ta'];
+      if (!locales.some((locale) => values[`title_${locale}`]?.trim())) return 'Enter a story title.';
+      if (nextStatus === 'published' && !locales.some((locale) => values[`title_${locale}`]?.trim() && values[`summary_${locale}`]?.trim() && values[`body_${locale}`]?.trim())) return 'Complete the title, short description, and article before publishing.';
+      if (values.source_url && !isValidUrl(values.source_url)) return 'Enter a valid source URL.';
+      return '';
+    }
+    const titleValue = values.title_en || values.title_ta || values.title_kn;
+    if (!titleValue?.trim()) return 'Enter a title.';
     if (type === 'videos' && values.youtube_url && !isValidUrl(values.youtube_url)) return 'Enter a valid http(s) video URL.';
     if (values.source_url && !isValidUrl(values.source_url)) return 'Enter a valid source URL.';
     return '';
@@ -77,7 +100,8 @@ export default function ContentEditorPage({ type }) {
     if (validation) { setError(validation); showToast(validation); return; }
     setSaving(true); setError('');
     try {
-      const payload = { ...form, id, slug: form.slug || slugify(form.title_en || form.title_ta || form.title_kn || title), tags: form.tags.split(',').map((tag) => tag.trim()).filter(Boolean), status: finalStatus, published_at: finalStatus === 'published' ? new Date().toISOString() : null };
+      const publishAt = form.published_at ? new Date(form.published_at).toISOString() : finalStatus === 'published' ? new Date().toISOString() : null;
+      const payload = { ...form, id, slug: form.slug || slugify(form.title_en || form.title_ta || form.title_kn || title), tags: form.tags.split(',').map((tag) => tag.trim()).filter(Boolean), status: finalStatus, published_at: publishAt };
       await saveContent(type, payload, profile);
       setDirty(false); setSaving(false);
       showToast(finalStatus === 'published' ? 'Published successfully.' : 'Draft saved successfully.', 'success');
@@ -89,13 +113,14 @@ export default function ContentEditorPage({ type }) {
   const fileLabel = type === 'videos' ? 'Video thumbnail' : type === 'resources' ? 'PDF document' : 'Cover image';
 
   return (
-    <Box component="form" onSubmit={(event) => submit(event, 'draft')}>
+    <Box component="form" className={`admin-content-editor ${type === 'news' ? 'admin-news-editor' : ''}`} onSubmit={(event) => submit(event, 'draft')}>
       <Stack direction={{ xs: 'column', sm: 'row' }} gap={2} alignItems={{ sm: 'center' }} sx={{ mb: 3 }}>
         <Button component={Link} to={'/admin/' + type} startIcon={<ArrowBackRoundedIcon />}>{t('common.back')}</Button>
         <Box sx={{ flexGrow: 1 }}>
-          <Typography className="eyebrow">ADMIN / EDITOR</Typography>
+          <Typography className="eyebrow">AB AGRI / NEWSROOM</Typography>
           <Typography variant="h3" sx={{ mt: 0.5 }}>{id ? 'Edit ' + singular : 'New ' + singular}</Typography>
           {title && <Typography color="text.secondary">{title}</Typography>}
+          {type === 'news' && <Typography className="editor-publish-hint">Publish the story when it is ready; published stories appear on the public News page.</Typography>}
         </Box>
         <Button type="submit" variant="outlined" disabled={saving || uploading} startIcon={<SaveRoundedIcon />}>{t('common.save')}</Button>
         {(isAdmin || type !== 'news') && <Button type="button" variant="contained" disabled={saving || uploading} onClick={(event) => submit(event, isAdmin ? 'published' : 'pending')} startIcon={<SendRoundedIcon />}>{isAdmin ? t('common.publish') : t('common.submit')}</Button>}
@@ -106,21 +131,47 @@ export default function ContentEditorPage({ type }) {
             <CardContent sx={{ p: { xs: 2, md: 3 } }}>
               <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems={{ sm: 'center' }} gap={1.5} sx={{ mb: 2.5 }}>
                 <Typography variant="h6">Content</Typography>
-                <FormControl size="small" sx={{ minWidth: 160 }}>
-                  <InputLabel>Editing language</InputLabel>
-                  <Select value={editingLanguage} label="Editing language" onChange={(event) => setEditingLanguage(event.target.value)}>
-                    <MenuItem value="en">English</MenuItem>
-                    <MenuItem value="ta">{'\u0ba4\u0bae\u0bbf\u0bb4\u0bcd'}</MenuItem>
-                    <MenuItem value="kn">{'\u0c95\u0ca8\u0ccd\u0ca8\u0ca1'}</MenuItem>
-                  </Select>
-                </FormControl>
               </Stack>
+              {type === 'news' && !id && <FormControl fullWidth size="small" sx={{ mb: 2.5 }}>
+                <InputLabel id="story-idea-label">Suggested story idea (optional)</InputLabel>
+                <Select
+                  labelId="story-idea-label"
+                  value={selectedStoryIdea}
+                  label="Suggested story idea (optional)"
+                  onChange={(event) => applyStoryIdea(event.target.value)}
+                >
+                  <MenuItem value=""><em>Choose an idea</em></MenuItem>
+                  {newsStoryIdeas.map((idea) => <MenuItem key={idea.title} value={idea.title}>{idea.title}</MenuItem>)}
+                </Select>
+                <FormHelperText>Choosing an idea fills the story title and category. Verify details and add your own summary and article before publishing.</FormHelperText>
+              </FormControl>}
               <Grid container spacing={2}>
-                <Grid size={{ xs: 12 }}>{field(contentKey('title'), editingLanguageName + ' title')}</Grid>
                 {type === 'news' ? <>
-                  <Grid size={{ xs: 12 }}>{field(contentKey('summary'), editingLanguageName + ' summary', { multiline: true })}</Grid>
-                  <Grid size={{ xs: 12 }}>{field(contentKey('body'), editingLanguageName + ' article', { multiline: true })}</Grid>
-                </> : <Grid size={{ xs: 12 }}>{field(contentKey('description'), editingLanguageName + ' ' + singular + ' description', { multiline: true })}</Grid>}
+                  <Grid size={{ xs: 12 }}><Typography variant="body2" color="text.secondary">Write the story in the language you want to publish. You can add a translation later.</Typography></Grid>
+                  <Grid size={{ xs: 12 }}>{field('title_en', 'Story title')}</Grid>
+                  <Grid size={{ xs: 12 }}>{field('summary_en', 'Short description', { multiline: true })}</Grid>
+                  <Grid size={{ xs: 12 }}>{field('body_en', 'Full news article', { multiline: true })}</Grid>
+                  <Grid size={{ xs: 12 }}>
+                    <Accordion disableGutters elevation={0} sx={{ border: '1px solid #dce7d8', borderRadius: '14px !important', bgcolor: '#f7f9f3', '&::before': { display: 'none' } }}>
+                      <AccordionSummary expandIcon={<ExpandMoreRoundedIcon />}>
+                        <Box>
+                          <Typography fontWeight={700}>Tamil translation (optional)</Typography>
+                          <Typography variant="body2" color="text.secondary">Add Tamil text to show when visitors select Tamil.</Typography>
+                        </Box>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <Grid container spacing={2}>
+                          <Grid size={{ xs: 12 }}>{field('title_ta', 'Tamil title')}</Grid>
+                          <Grid size={{ xs: 12 }}>{field('summary_ta', 'Tamil short description', { multiline: true })}</Grid>
+                          <Grid size={{ xs: 12 }}>{field('body_ta', 'Tamil article', { multiline: true })}</Grid>
+                        </Grid>
+                      </AccordionDetails>
+                    </Accordion>
+                  </Grid>
+                </> : <>
+                  <Grid size={{ xs: 12 }}>{field('title_en', type === 'videos' ? 'Video title' : 'Resource title')}</Grid>
+                  <Grid size={{ xs: 12 }}>{field('description_en', type === 'videos' ? 'Video description' : 'Resource description', { multiline: true })}</Grid>
+                </>}
               </Grid>
             </CardContent>
           </Card>
@@ -136,6 +187,10 @@ export default function ContentEditorPage({ type }) {
                     {categories.map((category) => <MenuItem key={category.id} value={category.id}>{category.name_en || category.name_ta}</MenuItem>)}
                   </Select>
                 </FormControl>
+                {type === 'news' && <>
+                  <TextField fullWidth label="District / Location (optional)" value={form.district || ''} onChange={(event) => update('district', event.target.value)} placeholder="For example, Thanjavur" />
+                  <TextField fullWidth type="datetime-local" label="Published date and time" value={form.published_at || ''} onChange={(event) => update('published_at', event.target.value)} InputLabelProps={{ shrink: true }} helperText="Leave blank to use the current date and time when publishing." />
+                </>}
                 {type === 'videos' && <>
                   <TextField fullWidth label="Spoken language" value={form.spoken_language} onChange={(event) => update('spoken_language', event.target.value)} />
                   <TextField fullWidth label="YouTube URL (optional)" value={form.youtube_url} onChange={(event) => update('youtube_url', event.target.value)} />
@@ -160,10 +215,10 @@ export default function ContentEditorPage({ type }) {
           <Card sx={{ mt: 2.5 }}>
             <CardContent sx={{ p: 3 }}>
               <Typography variant="h6">Uploads</Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>Files are validated by the Python API and stored in the backend uploads folder.</Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>Files are stored securely in Supabase Storage.</Typography>
               <Button component="label" variant="outlined" sx={{ mt: 2 }} fullWidth disabled={uploading}>
                 {uploading ? 'Uploading?' : 'Choose ' + fileLabel.toLowerCase()}
-                <input hidden type="file" accept={type === 'videos' ? 'video/mp4,video/webm,video/quicktime' : type === 'resources' ? 'application/pdf' : 'image/png,image/jpeg,image/webp'} onChange={chooseFile} />
+                <input hidden type="file" accept={type === 'videos' ? 'video/mp4,video/webm,video/quicktime,image/png,image/jpeg,image/webp' : type === 'resources' ? 'application/pdf' : 'image/png,image/jpeg,image/webp'} onChange={chooseFile} />
               </Button>
               {uploading && <LinearProgress variant="determinate" value={uploadProgress} sx={{ mt: 2 }} />}
               {form.file_name && <Typography variant="caption" sx={{ display: 'block', mt: 1 }}>{form.file_name}</Typography>}

@@ -1,0 +1,46 @@
+.admin-dashboard {
+  --dash-green: #235535;
+  --dash-accent: #a2461d;
+  --dash-ink: #192d20;
+}
+
+.admin-dashboard-hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin: 4px 0 26px;
+  padding: clamp(22px, 3vw, 34px);
+  border-radius: 20px;
+  color: #fffefa;
+  background: linear-gradient(125deg, #1a462b, var(--dash-green) 68%, #2d603b);
+}
+
+.admin-dashboard-hero .eyebrow { color: #f3a575; }
+.admin-dashboard-hero h1 { margin: 6px 0 0; color: #fffefa; font-size: clamp(2rem, 3.4vw, 2.9rem); font-weight: 800; letter-spacing: -.055em; }
+.admin-dashboard-intro { max-width: 650px; margin-top: 9px !important; color: #e3eddc; }
+.admin-dashboard-primary.MuiButton-root { flex: 0 0 auto; border-radius: 999px; background: var(--dash-accent); }
+.admin-dashboard-primary.MuiButton-root:hover { background: #853610; }
+.admin-dashboard-stats { margin-bottom: 22px; }
+.admin-dashboard-stat.MuiCard-root { height: 100%; border-color: #e3e7dc; border-radius: 16px; background: #fffefa; box-shadow: none; }
+.admin-dashboard-stat .MuiCardContent-root { padding: 20px; }
+.admin-dashboard-stat .MuiTypography-body2 { color: #66796e; }
+.admin-dashboard-stat .MuiTypography-h3 { color: var(--dash-ink); font-size: clamp(2rem, 3vw, 2.65rem); font-weight: 800; }
+.admin-dashboard-stat .MuiSvgIcon-root { color: #678b6d; }
+.admin-dashboard-stat.pending .MuiSvgIcon-root { color: #c77735; }
+.admin-dashboard-stat.published .MuiSvgIcon-root { color: #589565; }
+.admin-dashboard-stat.drafts .MuiSvgIcon-root { color: #6a7a70; }
+.admin-dashboard-stat.people .MuiSvgIcon-root { color: #538a72; }
+.admin-dashboard-panel.MuiCard-root { height: 100%; border-color: #e3e7dc; border-radius: 16px; background: #fffefa; box-shadow: none; }
+.admin-dashboard-panel > .MuiCardContent-root { padding: clamp(20px, 2vw, 26px); }
+.admin-dashboard-panel .MuiTypography-h6 { color: var(--dash-ink); font-weight: 800; }
+.admin-dashboard-panel .MuiButton-root { border-radius: 999px; }
+.admin-dashboard-panel .MuiButton-contained { background: var(--dash-green); }
+.admin-dashboard-panel .MuiButton-outlined { border-color: #b8cbb7; color: var(--dash-green); }
+.admin-dashboard-empty { display: flex; align-items: center; gap: 14px; min-height: 116px; padding: 18px 0 4px; color: #68806e; }
+.admin-dashboard-empty > .MuiSvgIcon-root { color: #78977a; font-size: 32px; }
+
+@media (max-width: 700px) {
+  .admin-dashboard-hero { align-items: flex-start; flex-direction: column; }
+  .admin-dashboard-primary.MuiButton-root { align-self: stretch; }
+}

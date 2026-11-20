@@ -1,0 +1,147 @@
+.public-about {
+  --about-green: #235535;
+  min-height: calc(100svh - 76px);
+  padding: clamp(16px, 2.6vw, 32px) 0 64px;
+  color: #192d20;
+  background: #f8f7ed;
+}
+
+.about-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: clamp(16px, 4vw, 48px);
+  padding: clamp(16px, 2.6vw, 28px);
+  border-radius: 20px;
+  color: var(--paper);
+  background: linear-gradient(125deg, #1a462b, var(--about-green) 66%, #2d603b);
+}
+
+.about-hero-copy {
+  align-self: center;
+  padding: 12px clamp(4px, 1.5vw, 18px);
+}
+
+.about-hero h1 {
+  margin: 0;
+  font-size: clamp(1.8rem, 3.6vw, 2.85rem);
+  line-height: 1.1;
+  letter-spacing: -.035em;
+  text-wrap: balance;
+}
+
+.about-hero p {
+  max-width: 55ch;
+  margin: 12px 0 0;
+  color: #e3eddc;
+}
+
+.about-hero p:first-of-type {
+  color: var(--paper);
+  font-size: clamp(1rem, 1.6vw, 1.2rem);
+  font-weight: 650;
+}
+
+.about-hero-photo {
+  min-height: 225px;
+  border-radius: 15px;
+  background: #5a774e url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1000&q=85') center 55% / cover no-repeat;
+}
+
+.about-explore,
+.about-contact {
+  margin-top: 28px;
+}
+
+.about-explore h2,
+.about-contact h2 {
+  margin: 0;
+  font-size: clamp(1.15rem, 2vw, 1.5rem);
+}
+
+.about-explore-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.about-explore-card {
+  display: flex;
+  min-height: 180px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 18px;
+  border: 1px solid #e3e7dc;
+  border-radius: 16px;
+  background: var(--paper);
+}
+
+.about-explore-card:hover {
+  border-color: #b8c8ae;
+  background: #fbfcf7;
+}
+
+.about-explore-card h3,
+.about-explore-card p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.about-explore-card h3 {
+  font-size: 1.1rem;
+  line-height: 1.25;
+}
+
+.about-explore-card p {
+  color: var(--muted);
+  font-size: .92rem;
+}
+
+.about-card-icon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 12px;
+  color: var(--about-green);
+  background: #eaf1e4;
+}
+
+.about-card-arrow {
+  align-self: flex-end;
+  margin-top: auto;
+  color: var(--about-green);
+}
+
+.about-contact {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid #dce7d4;
+  border-radius: 16px;
+  background: #edf2e7;
+}
+
+.public-about a:focus-visible {
+  outline: 2px solid #426b45;
+  outline-offset: 3px;
+}
+
+@media (max-width: 660px) {
+  .about-hero,
+  .about-explore-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .about-hero-photo {
+    min-height: 160px;
+  }
+
+  .about-explore-card {
+    min-height: 0;
+  }
+}

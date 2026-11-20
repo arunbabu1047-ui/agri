@@ -78,12 +78,6 @@ create or replace function public.is_admin() returns boolean language sql stable
   select exists (select 1 from public.profiles where id = auth.uid() and role = 'admin' and is_active = true);
 $$;
 
-create or replace function public.promote_first_admin(target_user_id uuid) returns void language plpgsql security definer set search_path = public as $$
-begin
-  if exists (select 1 from public.profiles where role = 'admin' and is_active = true) then raise exception 'An administrator already exists'; end if;
-  update public.profiles set role = 'admin', is_active = true where id = target_user_id;
-end; $$;
-
 alter table public.profiles enable row level security;
 alter table public.categories enable row level security;
 alter table public.news enable row level security;
@@ -92,6 +86,8 @@ alter table public.resources enable row level security;
 
 create policy "profiles own or admin read" on public.profiles for select using (id = auth.uid() or public.is_admin());
 create policy "profiles own update" on public.profiles for update using (id = auth.uid() or public.is_admin()) with check (id = auth.uid() or public.is_admin());
+revoke update on public.profiles from authenticated;
+grant update (full_name) on public.profiles to authenticated;
 create policy "categories public read" on public.categories for select using (true);
 create policy "categories admin write" on public.categories for all using (public.is_admin()) with check (public.is_admin());
 

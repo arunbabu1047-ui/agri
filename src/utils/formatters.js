@@ -1,5 +1,14 @@
+import { newsTranslations } from '../data/newsTranslations';
+import { videoTranslations } from '../data/videoTranslations';
+
 export function localized(item, field, language) {
-  return item?.[`${field}_${language}`] || item?.[`${field}_en`] || item?.[`${field}_ta`] || item?.[`${field}_kn`] || '';
+  return item?.[`${field}_${language}`]
+    || (language === 'ta' ? newsTranslations[item?.slug]?.[`${field}_ta`] : '')
+    || (language === 'ta' ? videoTranslations[item?.slug]?.[`${field}_ta`] : '')
+    || item?.[`${field}_en`]
+    || item?.[`${field}_ta`]
+    || item?.[`${field}_kn`]
+    || '';
 }
 
 export function formatDate(value, language = 'ta') {

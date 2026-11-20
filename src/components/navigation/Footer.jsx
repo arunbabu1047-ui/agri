@@ -82,7 +82,7 @@ export default function Footer() {
           gap={1}
         >
           <Typography variant="caption" color="rgba(255,255,255,.45)">
-            © 2025 AB Agri{" "}
+            © 2026 AB Agri{" "}
           </Typography>
           <Typography variant="caption" color="rgba(255,255,255,.45)">
             Built for useful decisions in the field.
